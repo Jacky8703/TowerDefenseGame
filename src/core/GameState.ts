@@ -10,4 +10,5 @@ export interface GameState {
     readonly enemies: Enemy[]
     readonly towers: Tower[]
     readonly projectiles: Projectile[]
+    readonly gameOver: boolean
 }

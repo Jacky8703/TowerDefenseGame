@@ -1,11 +1,11 @@
-import { GAME_CONFIG, Point } from "./GameConfig";
+import { GAME_CONFIG, Position } from "./GameConfig";
 
 export class GameMap {
     readonly width: number; 
     readonly height: number;
     readonly cellSize: number;
-    readonly path: Point[];
-    readonly buildableCells: Point[];
+    readonly path: Position[];
+    readonly buildableCells: Position[];
 
     constructor() {
         this.width = GAME_CONFIG.map.width;
@@ -16,10 +16,10 @@ export class GameMap {
     }
     
     // the full path will be the one that links all angles
-    private buildFullPath(pathAngles: Point[]): Point[] {
-        let fullPath: Point[] = [];
-        let curr: Point;
-        let next: Point;
+    private buildFullPath(pathAngles: Position[]): Position[] {
+        let fullPath: Position[] = [];
+        let curr: Position;
+        let next: Position;
         let cellsCount = 0
         for (let i = 0; i < pathAngles.length-1; i++) {
             curr = pathAngles[i]
@@ -34,16 +34,16 @@ export class GameMap {
                 for (let j = 0; j < cellsCount; j++)
                     fullPath.push({x: curr.x + this.cellSize*(j+1), y: curr.y})
             } else {
-                throw new Error("path points are not aligned")
+                throw new Error("path positions are not aligned")
             }
         }
         fullPath.push(pathAngles[pathAngles.length-1]) // add the last element
         return fullPath
     }
 
-    private calculateBuildableCells(path: Point[]): Point[] {
-        let buildableCells: Point[] = []
-        let cell: Point;
+    private calculateBuildableCells(path: Position[]): Position[] {
+        let buildableCells: Position[] = []
+        let cell: Position;
         for (let x = 0; x < this.width; x += this.cellSize) {
             for (let y = 0; y < this.height; y += this.cellSize) {
                 cell = {x: x, y: y}

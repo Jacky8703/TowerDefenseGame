@@ -1,4 +1,9 @@
-export interface Point {
+export interface Action {
+    type: "BUILD_TOWER" | "NONE"
+    position?: Position // required if type is BUILD_TOWER
+}
+
+export interface Position {
     readonly x: number
     readonly y: number
 }
@@ -7,6 +12,10 @@ export interface Wave {
     readonly enemyType: string
     readonly enemyCount: number
 }
+
+// export interface Manager {
+//     update(): void;
+// }
 
 export const GAME_CONFIG = {
     map: {
