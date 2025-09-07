@@ -4,25 +4,50 @@ export interface Action {
 }
 
 export interface Position {
-    readonly x: number
-    readonly y: number
+    x: number
+    y: number
+}
+
+export interface Direction {
+    readonly dx: number; // "<-" -1, 0, 1 "->"
+    readonly dy: number; // "^" -1, 0, 1 "v"
+}
+
+export interface Enemy {
+    health: number;
+    speed: number; // pixels per second
+    position: Position;
+    currentWaypointIndex: number // current index of the waypoint to reach
+    pathProgress: number; // progress along the path, from 0 to 1
 }
 
 export interface Wave {
-    readonly enemyType: string
-    readonly enemyCount: number
+    enemyType: string
+    enemyCount: number
 }
 
-// export interface Manager {
-//     update(): void;
-// }
+export interface Tower {
+    range: number;
+    damage: number;
+    fireRate: number; // shots per second
+    multiTarget: boolean;
+    position: Position;
+    buildCooldown: number; // seconds before it can be constructed
+}
+
+export interface Projectile {
+    position: Position;
+    target: Enemy;
+    speed: number; // pixels per second
+    damage: number;
+}
 
 export const GAME_CONFIG = {
     map: {
         width: 900, 
         height: 600,
-        cellSize: 50, // size of each grid cell in pixels, must be a point coordinate divisor
-        pathAngles: [
+        cellSize: 50, // size of each grid cell in pixels, must be a point coordinate divisor -> add a check for this
+        waypointTopLeftCorners: [ // must be aligned horizontally or vertically -> add a check for this
             { x: 50, y: 0 },
             { x: 50, y: 300 },
             { x: 400, y: 300 },

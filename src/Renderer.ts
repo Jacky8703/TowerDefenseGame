@@ -18,10 +18,10 @@ export class Renderer {
     private drawMap(gameState: GameState) {
         this.ctx.fillStyle = "green";
         gameState.map.buildableCells.forEach(cell => {
-            this.ctx.fillRect(cell.x, cell.y, gameState.map.cellSize, gameState.map.cellSize);
+            this.ctx.fillRect(cell.x - gameState.map.cellSize/2, cell.y - gameState.map.cellSize/2, gameState.map.cellSize, gameState.map.cellSize); // top-left corner coordinates
             this.ctx.strokeStyle = 'black';
             this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(cell.x, cell.y, gameState.map.cellSize, gameState.map.cellSize);
+            this.ctx.strokeRect(cell.x - gameState.map.cellSize/2, cell.y - gameState.map.cellSize/2, gameState.map.cellSize, gameState.map.cellSize);
         });
     }
 }
