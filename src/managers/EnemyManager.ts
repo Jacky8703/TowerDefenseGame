@@ -1,47 +1,84 @@
 import { GameState } from '../core/GameState';
-import { Direction, Enemy, Position } from '../core/GameConfig';
+import { Direction, Enemy, GAME_CONFIG, Position } from '../core/GameConfig';
 import { GameMap } from '../core/GameMap';
 
 export class EnemyManager {
-    update(state: GameState, deltaTime: number) {
-        state.enemies.forEach((enemy) => {
-            if (enemy.health <= 0) {
-                this.removeEnemy(enemy, state.enemies);
-            } else {
-                this.move(enemy, deltaTime, state.map);
-            }
-        });
+    private readonly map: GameMap;
+
+    constructor(gameMap: GameMap) {
+        this.map = gameMap;
     }
 
-    private move(enemy: Enemy, deltaTime: number, map: GameMap) {
+    update(deltaTime: number, gameEnemies: Enemy[]) {
+        for (let i = gameEnemies.length - 1; i >= 0; i--) {
+            // iterate backwards for safe removal
+            if (gameEnemies[i].health <= 0) {
+                gameEnemies.splice(i, 1);
+            } else {
+                this.move(gameEnemies[i], deltaTime);
+            }
+        }
+    }
+
+    spawnEnemy(type: string, gameEnemies: Enemy[]) {
+        const startPosition: Position = {
+            x:
+                GAME_CONFIG.map.waypointTopLeftCorners[0].x +
+                GAME_CONFIG.map.cellSize / 2,
+            y:
+                GAME_CONFIG.map.waypointTopLeftCorners[0].y +
+                GAME_CONFIG.map.cellSize / 2,
+        };
+        // default enemy
+        let basicEnemy: Enemy = {
+            health: GAME_CONFIG.enemies.basic.health,
+            speed: GAME_CONFIG.enemies.basic.speed,
+            position: startPosition,
+            currentWaypointIndex: 1,
+            pathProgress: 0,
+        };
+        switch (type) {
+            case 'advanced': // this will be a new type of enemy with different health and speed
+                gameEnemies.push(basicEnemy);
+                break;
+
+            default:
+                gameEnemies.push(basicEnemy);
+                break;
+        }
+    }
+
+    private move(enemy: Enemy, deltaTime: number) {
         const movement = enemy.speed * deltaTime;
         const direction =
-            map.path.waypoints[enemy.currentWaypointIndex - 1].nextDirection;
+            this.map.path.waypoints[enemy.currentWaypointIndex - 1]
+                .nextDirection;
         enemy.position.x += movement * direction.dx;
         enemy.position.y += movement * direction.dy;
 
         if (
             enemy.position.x >=
-                map.path.waypoints[enemy.currentWaypointIndex + 1].position.x &&
+                this.map.path.waypoints[enemy.currentWaypointIndex].position
+                    .x &&
             enemy.position.y >=
-                map.path.waypoints[enemy.currentWaypointIndex + 1].position.y
+                this.map.path.waypoints[enemy.currentWaypointIndex].position.y
         ) {
-            // next waypoint reached
+            // next waypoint reached, works only for right and down directions
             enemy.position.x =
-                map.path.waypoints[enemy.currentWaypointIndex + 1].position.x;
+                this.map.path.waypoints[enemy.currentWaypointIndex].position.x;
             enemy.position.y =
-                map.path.waypoints[enemy.currentWaypointIndex + 1].position.y;
+                this.map.path.waypoints[enemy.currentWaypointIndex].position.y;
             enemy.currentWaypointIndex += 1;
         }
 
         enemy.pathProgress =
-            (map.path.waypoints[enemy.currentWaypointIndex - 1]
+            (this.map.path.waypoints[enemy.currentWaypointIndex - 1]
                 .distanceFromStart +
-                movement) /
-            map.path.length;
-    }
-
-    private removeEnemy(enemy: Enemy, array: Enemy[]) {
-        array.splice(array.indexOf(enemy), 1);
+                this.map.calculateDistanceBetweenPoints(
+                    enemy.position,
+                    this.map.path.waypoints[enemy.currentWaypointIndex - 1]
+                        .position
+                )) /
+            this.map.path.length;
     }
 }

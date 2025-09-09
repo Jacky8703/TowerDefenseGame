@@ -60,15 +60,18 @@ export const GAME_CONFIG = {
     enemies: {
         basic: {
             health: 100,
-            speed: 10, // px per second ?
+            speed: 50, // px per second
         },
     },
-    waveInterval: 30, // time between waves in seconds
-    waves: [
-        { enemyType: 'basic', enemyCount: 5 },
-        { enemyType: 'basic', enemyCount: 10 },
-        { enemyType: 'basic', enemyCount: 15 },
-    ],
+    waves: {
+        waveDelay: 10, // time between waves in seconds
+        spawnDelay: 1, // time between spawns in seconds
+        list: [
+            { enemyType: 'basic', enemyCount: 3 },
+            { enemyType: 'basic', enemyCount: 5 },
+            { enemyType: 'basic', enemyCount: 7 },
+        ],
+    },
     towers: {
         basic: {
             range: 100,

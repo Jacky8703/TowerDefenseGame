@@ -27,6 +27,12 @@ export class GameMap {
         this.buildableCells = this.calculateBuildableCells();
     }
 
+    calculateDistanceBetweenPoints(from: Position, to: Position): number {
+        return Math.sqrt(
+            Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2)
+        );
+    }
+
     private getDirectionBetweenPoints(from: Position, to: Position): Direction {
         const dx = Math.sign(to.x - from.x); // "<-" -1, 0, 1 "->"
         const dy = Math.sign(to.y - from.y); // "^" -1, 0, 1 "v"
@@ -55,9 +61,7 @@ export class GameMap {
             next = waypointsPos[i + 1];
             fullPath.push(curr);
             direction = this.getDirectionBetweenPoints(curr, next);
-            length = Math.sqrt(
-                Math.pow(curr.x - next.x, 2) + Math.pow(curr.y - next.y, 2)
-            );
+            length = this.calculateDistanceBetweenPoints(curr, next);
             waypoints.push({
                 position: waypointsPos[i],
                 nextDirection: direction,

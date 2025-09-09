@@ -11,26 +11,29 @@ import { WaveManager } from './managers/WaveManager';
 const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 canvas.width = GAME_CONFIG.map.width;
 canvas.height = GAME_CONFIG.map.height;
-let map = new GameMap();
-console.log(map.path.waypoints);
-let engine = new GameEngine(
-    map,
-    new WaveManager(),
-    new EnemyManager(),
-    new TowerManager(),
-    new ProjectileManager()
-);
+
+const map = new GameMap();
+const enemyManager = new EnemyManager(map);
+const waveManager = new WaveManager(enemyManager);
+const towerManager = new TowerManager();
+// const projectileManager = new ProjectileManager();
+let engine = new GameEngine(map, waveManager, enemyManager, towerManager);
+let renderer = new Renderer(canvas);
 
 let action: Action = { type: 'NONE' };
 
-let renderer = new Renderer(canvas);
-//renderer.render(engine.step(action));
-renderer.render({
-    gameTime: 0,
-    waveNumber: 0,
-    map: map,
-    enemies: [],
-    towers: [],
-    projectiles: [],
-    gameOver: false,
-});
+let state: GameState = engine.getState();
+renderer.render(state);
+
+function gameloop() {
+    engine.step(action);
+    state = engine.getState();
+    renderer.render(state);
+    if (state.gameOver) {
+        console.log('Game Over!');
+        return;
+    }
+    requestAnimationFrame(gameloop);
+}
+
+gameloop();
