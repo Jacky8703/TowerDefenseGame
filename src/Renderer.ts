@@ -1,4 +1,4 @@
-import { Enemy, GAME_CONFIG } from './core/GameConfig';
+import { Enemy, GAME_CONFIG, Tower } from './core/GameConfig';
 import { GameMap } from './core/GameMap';
 import { GameState } from './core/GameState';
 
@@ -15,6 +15,7 @@ export class Renderer {
         this.drawMap(gameState.map);
         this.drawPath(gameState.map);
         this.drawEnemies(gameState.enemies);
+        this.drawTowers(gameState.towers, gameState.map.cellSize / 1.5);
     }
 
     private drawMap(map: GameMap) {
@@ -50,17 +51,61 @@ export class Renderer {
     }
 
     private drawEnemies(enemies: Enemy[]) {
-        this.ctx.fillStyle = 'black';
+        const radius = 10;
         enemies.forEach((enemy) => {
+            const healthPercent =
+                enemy.health / GAME_CONFIG.enemies[enemy.type].health;
+            // draw the outer contour (a full, empty circle)
             this.ctx.beginPath();
+            this.ctx.strokeStyle = 'black';
+            this.ctx.lineWidth = 2;
             this.ctx.arc(
                 enemy.position.x,
                 enemy.position.y,
-                10,
+                radius,
                 0,
                 2 * Math.PI
             );
+            this.ctx.stroke();
+
+            // draw the filled health arc
+            this.ctx.beginPath();
+            this.ctx.fillStyle = 'black';
+            // move to the center to create a pie-slice shape
+            this.ctx.moveTo(enemy.position.x, enemy.position.y);
+            // draw the arc from the top (-90 degrees) clockwise
+            this.ctx.arc(
+                enemy.position.x,
+                enemy.position.y,
+                radius,
+                -0.5 * Math.PI,
+                -0.5 * Math.PI + healthPercent * 2 * Math.PI
+            );
+            this.ctx.closePath(); // close the path back to the center
             this.ctx.fill();
+        });
+    }
+
+    private drawTowers(towers: Tower[], size: number) {
+        this.ctx.fillStyle = 'grey';
+        towers.forEach((tower) => {
+            this.ctx.fillRect(
+                tower.position.x - size / 2,
+                tower.position.y - size / 2,
+                size,
+                size
+            ); // top-left corner coordinates
+            this.ctx.beginPath();
+            this.ctx.arc(
+                tower.position.x,
+                tower.position.y,
+                GAME_CONFIG.towers[tower.type].range,
+                0,
+                2 * Math.PI
+            );
+            this.ctx.strokeStyle = 'black';
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
         });
     }
 }

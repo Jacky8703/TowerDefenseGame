@@ -2,7 +2,7 @@ import { EnemyManager } from '../managers/EnemyManager';
 import { ProjectileManager } from '../managers/ProjectileManager';
 import { TowerManager } from '../managers/TowerManager';
 import { WaveManager } from '../managers/WaveManager';
-import { Action } from './GameConfig';
+import { Action, GAME_CONFIG, TowerType } from './GameConfig';
 import { GameMap } from './GameMap';
 import { GameState } from './GameState';
 
@@ -29,6 +29,7 @@ export class GameEngine {
             enemies: [],
             towers: [],
             projectiles: [],
+            towerBuildCooldowns: this.setTowerBuildCooldowns(),
             gameOver: false,
         };
         this.waveManager = waveManager;
@@ -42,13 +43,27 @@ export class GameEngine {
     step(action: Action) {
         this.deltaTime = (Date.now() - this.lastUpdateTime) / 1000.0; // in seconds
         // handle action
-        // if (action.type === "BUILD_TOWER" && action.position) {
-        //     this.towerManager.buildTower(this.currentState, action.position);
-        // }
+        if (
+            action.type === 'BUILD_TOWER' &&
+            action.position &&
+            action.towerType
+        ) {
+            this.towerManager.buildTower(
+                action.towerType,
+                action.position,
+                this.currentState.towers,
+                this.currentState.towerBuildCooldowns
+            );
+        }
         // update all managers
         this.waveManager.update(this.deltaTime, this.currentState.enemies);
         this.enemyManager.update(this.deltaTime, this.currentState.enemies);
-        //this.towerManager.update(newTowers, this.deltaTime);
+        this.towerManager.update(
+            this.deltaTime,
+            this.currentState.towers,
+            this.currentState.towerBuildCooldowns,
+            this.currentState.enemies
+        );
         //this.projectileManager.update(this.deltaTime);
         // update game state
         this.currentState.waveNumber = this.waveManager.getWaveNumber();
@@ -60,6 +75,14 @@ export class GameEngine {
 
     getState(): GameState {
         return this.currentState;
+    }
+
+    private setTowerBuildCooldowns(): Record<TowerType, number> {
+        const cooldowns = {} as Record<TowerType, number>;
+        for (const towerType in GAME_CONFIG.towers) {
+            cooldowns[towerType as TowerType] = 0;
+        }
+        return cooldowns;
     }
 
     private checkGameOver(): boolean {

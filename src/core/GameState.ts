@@ -1,4 +1,4 @@
-import { Enemy, Tower, Projectile } from '../core/GameConfig';
+import { Enemy, Tower, Projectile, TowerType } from '../core/GameConfig';
 import { GameMap } from './GameMap';
 
 export interface GameState {
@@ -8,5 +8,6 @@ export interface GameState {
     enemies: Enemy[];
     towers: Tower[];
     projectiles: Projectile[];
+    towerBuildCooldowns: Record<TowerType, number>;
     gameOver: boolean;
 }

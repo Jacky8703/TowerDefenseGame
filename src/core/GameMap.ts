@@ -23,7 +23,9 @@ export class GameMap {
         this.width = GAME_CONFIG.map.width;
         this.height = GAME_CONFIG.map.height;
         this.cellSize = GAME_CONFIG.map.cellSize;
-        this.path = this.buildFullPath(GAME_CONFIG.map.waypointTopLeftCorners);
+        this.path = this.buildFullPath([
+            ...GAME_CONFIG.map.waypointTopLeftCorners,
+        ]);
         this.buildableCells = this.calculateBuildableCells();
     }
 

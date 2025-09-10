@@ -1,5 +1,11 @@
 import { GameState } from '../core/GameState';
-import { Direction, Enemy, GAME_CONFIG, Position } from '../core/GameConfig';
+import {
+    Direction,
+    Enemy,
+    EnemyType,
+    GAME_CONFIG,
+    Position,
+} from '../core/GameConfig';
 import { GameMap } from '../core/GameMap';
 
 export class EnemyManager {
@@ -20,7 +26,7 @@ export class EnemyManager {
         }
     }
 
-    spawnEnemy(type: string, gameEnemies: Enemy[]) {
+    spawnEnemy(type: EnemyType, gameEnemies: Enemy[]) {
         const startPosition: Position = {
             x:
                 GAME_CONFIG.map.waypointTopLeftCorners[0].x +
@@ -29,27 +35,18 @@ export class EnemyManager {
                 GAME_CONFIG.map.waypointTopLeftCorners[0].y +
                 GAME_CONFIG.map.cellSize / 2,
         };
-        // default enemy
-        let basicEnemy: Enemy = {
-            health: GAME_CONFIG.enemies.basic.health,
-            speed: GAME_CONFIG.enemies.basic.speed,
+
+        gameEnemies.push({
+            type: type,
+            health: GAME_CONFIG.enemies[type].health,
             position: startPosition,
             currentWaypointIndex: 1,
             pathProgress: 0,
-        };
-        switch (type) {
-            case 'advanced': // this will be a new type of enemy with different health and speed
-                gameEnemies.push(basicEnemy);
-                break;
-
-            default:
-                gameEnemies.push(basicEnemy);
-                break;
-        }
+        });
     }
 
     private move(enemy: Enemy, deltaTime: number) {
-        const movement = enemy.speed * deltaTime;
+        const movement = GAME_CONFIG.enemies[enemy.type].speed * deltaTime;
         const direction =
             this.map.path.waypoints[enemy.currentWaypointIndex - 1]
                 .nextDirection;

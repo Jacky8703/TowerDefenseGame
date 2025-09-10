@@ -1,6 +1,17 @@
+export enum EnemyType {
+    BASIC = 'basic',
+    // ADVANCED = 'advanced',
+}
+
+export enum TowerType {
+    BASIC = 'basic',
+    // SNIPER = 'sniper',
+}
+
 export interface Action {
     type: 'BUILD_TOWER' | 'NONE';
     position?: Position; // required if type is BUILD_TOWER
+    towerType?: TowerType; // required if type is BUILD_TOWER
 }
 
 export interface Position {
@@ -14,25 +25,22 @@ export interface Direction {
 }
 
 export interface Enemy {
+    type: EnemyType;
     health: number;
-    speed: number; // pixels per second
     position: Position;
     currentWaypointIndex: number; // current index of the waypoint to reach
     pathProgress: number; // progress along the path, from 0 to 1
 }
 
 export interface Wave {
-    enemyType: string;
+    enemyType: EnemyType;
     enemyCount: number;
 }
 
 export interface Tower {
-    range: number;
-    damage: number;
-    fireRate: number; // shots per second
-    multiTarget: boolean;
+    type: TowerType;
     position: Position;
-    buildCooldown: number; // seconds before it can be constructed
+    fireRate: number;
 }
 
 export interface Projectile {
@@ -58,28 +66,28 @@ export const GAME_CONFIG = {
         ],
     },
     enemies: {
-        basic: {
-            health: 100,
+        [EnemyType.BASIC]: {
+            health: 50,
             speed: 50, // px per second
         },
     },
     waves: {
-        waveDelay: 10, // time between waves in seconds
+        waveDelay: 2, // time between waves in seconds
         spawnDelay: 1, // time between spawns in seconds
         list: [
-            { enemyType: 'basic', enemyCount: 3 },
-            { enemyType: 'basic', enemyCount: 5 },
-            { enemyType: 'basic', enemyCount: 7 },
+            { enemyType: EnemyType.BASIC, enemyCount: 3 },
+            //{ enemyType: EnemyType.BASIC, enemyCount: 5 },
+            //{ enemyType: EnemyType.BASIC, enemyCount: 7 },
         ],
     },
     towers: {
-        basic: {
-            range: 100,
-            damage: 25,
-            fireRate: 1, // shots per second
-            multiTarget: false,
+        [TowerType.BASIC]: {
+            range: 75, // in pixels
+            damage: 10,
+            attackSpeed: 1, // time between attacks in seconds
             buildCooldown: 15, // seconds before it can be constructed
+            // multiTarget: false,
         },
     },
     projectileSpeed: 15, // px per second
-};
+} as const;
