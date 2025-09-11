@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8" />
     <title>Tower Defense</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="towers-panel">
-        <!-- id as GameConfig TowerType -->
-        <button class="tower-button" id="archer"></button>
-        <button class="tower-button" id="cannon"></button>
-        <button class="tower-button" id="sniper"></button>
+    <h1>Tower Defense Game</h1>
+    <div id="game-wrapper">
+        <div id="status-panel">
+            <span id="wave-display"></span>
+            <span id="money-display"></span>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="towers-panel">
+            <!-- id as GameConfig TowerType -->
+            <button class="tower-button" id="archer"></button>
+            <button class="tower-button" id="cannon"></button>
+            <button class="tower-button" id="sniper"></button>
+        </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
 </body>

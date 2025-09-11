@@ -8,6 +8,6 @@ export interface GameState {
     enemies: Enemy[];
     towers: Tower[];
     // projectiles: Projectile[];
-    towerBuildCooldowns: Record<TowerType, number>;
+    money: number;
     gameOver: boolean;
 }

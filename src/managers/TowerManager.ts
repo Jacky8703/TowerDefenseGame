@@ -17,18 +17,8 @@ export class TowerManager {
     update(
         deltaTime: number,
         towers: Tower[],
-        buildCooldowns: Record<TowerType, number>,
-        enemies: Enemy[]
+        enemies: Enemy[],
     ) {
-        // valuta se passare tutto lo stato
-        // substract cooldowns, find and attack enemies
-        for (const towerType in buildCooldowns) {
-            const type = towerType as TowerType;
-            buildCooldowns[type] = Math.max(
-                0,
-                buildCooldowns[type] - deltaTime
-            );
-        }
         towers.forEach((t) => {
             t.fireRate = Math.max(0, t.fireRate - deltaTime);
         });
@@ -39,12 +29,11 @@ export class TowerManager {
         type: TowerType,
         position: Position,
         towers: Tower[],
-        buildCooldowns: Record<TowerType, number>
-    ) {
-        // check cooldown
-        if (buildCooldowns[type] > 0) {
-            console.log('tower type is on cooldown');
-            return;
+        money: number,
+    ): number {
+        if (money < GAME_CONFIG.towers[type].cost) {
+            console.log('not enough money to build tower');
+            return money;
         }
         // validate position
         if (
@@ -56,7 +45,8 @@ export class TowerManager {
                     t.position.x === position.x && t.position.y === position.y
             )
         ) {
-            throw new Error('tower build position not valid');
+            console.log(`tower build position (${position.x}, ${position.y}) not valid`);
+            return money;
         }
 
         towers.push({
@@ -64,7 +54,7 @@ export class TowerManager {
             position: position,
             fireRate: GAME_CONFIG.towers[type].attackSpeed,
         });
-        buildCooldowns[type] = GAME_CONFIG.towers[type].buildCooldown;
+        return money - GAME_CONFIG.towers[type].cost;
     }
 
     // for each tower, check if it can fire, if yes check which enemies are in range and attack only the one with the highest progress along the path (the closest to the end)

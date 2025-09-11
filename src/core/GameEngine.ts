@@ -28,8 +28,8 @@ export class GameEngine {
             map: map,
             enemies: [],
             towers: [],
-            projectiles: [],
-            towerBuildCooldowns: this.setTowerBuildCooldowns(),
+            // projectiles: [],
+            money: GAME_CONFIG.initialMoney,
             gameOver: false,
         };
         this.waveManager = waveManager;
@@ -48,20 +48,19 @@ export class GameEngine {
             action.position &&
             action.towerType
         ) {
-            this.towerManager.buildTower(
+            this.currentState.money = this.towerManager.buildTower(
                 action.towerType,
                 action.position,
                 this.currentState.towers,
-                this.currentState.towerBuildCooldowns
+                this.currentState.money
             );
         }
         // update all managers
         this.waveManager.update(this.deltaTime, this.currentState.enemies);
-        this.enemyManager.update(this.deltaTime, this.currentState.enemies);
+        this.currentState.money = this.enemyManager.update(this.deltaTime, this.currentState.enemies, this.currentState.money);
         this.towerManager.update(
             this.deltaTime,
             this.currentState.towers,
-            this.currentState.towerBuildCooldowns,
             this.currentState.enemies
         );
         //this.projectileManager.update(this.deltaTime);
@@ -75,14 +74,6 @@ export class GameEngine {
 
     getState(): GameState {
         return this.currentState;
-    }
-
-    private setTowerBuildCooldowns(): Record<TowerType, number> {
-        const cooldowns = {} as Record<TowerType, number>;
-        for (const towerType in GAME_CONFIG.towers) {
-            cooldowns[towerType as TowerType] = 0;
-        }
-        return cooldowns;
     }
 
     private checkGameOver(): boolean {

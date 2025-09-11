@@ -39,7 +39,6 @@ export class WaveManager {
                 this.waveDelay -= deltaTime;
                 if (this.waveDelay <= 0) {
                     this.currentWaveNumber++;
-                    console.log('wave %d', this.currentWaveNumber);
                     this.currentEnemyCount = this.generateWave();
                     this.waveState = WaveState.SPAWNING;
                     this.waveDelay = GAME_CONFIG.waves.waveDelay;

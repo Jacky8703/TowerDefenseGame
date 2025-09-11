@@ -15,15 +15,17 @@ export class EnemyManager {
         this.map = gameMap;
     }
 
-    update(deltaTime: number, gameEnemies: Enemy[]) {
+    update(deltaTime: number, gameEnemies: Enemy[], money: number): number {
         for (let i = gameEnemies.length - 1; i >= 0; i--) {
             // iterate backwards for safe removal
             if (gameEnemies[i].health <= 0) {
+                money += GAME_CONFIG.enemies[gameEnemies[i].type].reward;
                 gameEnemies.splice(i, 1);
             } else {
                 this.move(gameEnemies[i], deltaTime);
             }
         }
+        return money;
     }
 
     spawnEnemy(type: EnemyType, gameEnemies: Enemy[]) {
@@ -53,18 +55,20 @@ export class EnemyManager {
         enemy.position.x += movement * direction.dx;
         enemy.position.y += movement * direction.dy;
 
-        if (
-            enemy.position.x >=
-                this.map.path.waypoints[enemy.currentWaypointIndex].position
-                    .x &&
-            enemy.position.y >=
-                this.map.path.waypoints[enemy.currentWaypointIndex].position.y
-        ) {
-            // next waypoint reached, works only for right and down directions
-            enemy.position.x =
-                this.map.path.waypoints[enemy.currentWaypointIndex].position.x;
-            enemy.position.y =
-                this.map.path.waypoints[enemy.currentWaypointIndex].position.y;
+        let waypointReached = false;
+        const targetWaypoint = this.map.path.waypoints[enemy.currentWaypointIndex];
+        if (direction.dx > 0 && enemy.position.x >= targetWaypoint.position.x) {
+            waypointReached = true; // >
+        } else if (direction.dx < 0 && enemy.position.x <= targetWaypoint.position.x) {
+            waypointReached = true; // <
+        } else if (direction.dy > 0 && enemy.position.y >= targetWaypoint.position.y) {
+            waypointReached = true; // v
+        } else if (direction.dy < 0 && enemy.position.y <= targetWaypoint.position.y) {
+            waypointReached = true; // ^
+        }
+        if (waypointReached) {
+            enemy.position.x = targetWaypoint.position.x;
+            enemy.position.y = targetWaypoint.position.y;
             enemy.currentWaypointIndex += 1;
         }
 

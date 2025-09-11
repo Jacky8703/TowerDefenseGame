@@ -20,7 +20,7 @@ export interface Position {
 }
 
 export interface Direction {
-    readonly dx: number; // "<-" -1, 0, 1 "->"
+    readonly dx: number; // "<" -1, 0, 1 ">"
     readonly dy: number; // "^" -1, 0, 1 "v"
 }
 
@@ -51,6 +51,7 @@ export interface Tower {
 // }
 
 export const GAME_CONFIG = {
+    initialMoney: 30,
     map: {
         width: 900,
         height: 600,
@@ -59,26 +60,35 @@ export const GAME_CONFIG = {
             // must be aligned horizontally or vertically -> add a check for this
             { x: 50, y: 0 },
             { x: 50, y: 300 },
-            { x: 400, y: 300 },
-            { x: 400, y: 450 },
-            { x: 750, y: 450 },
-            { x: 750, y: 550 },
+            { x: 200, y: 300 },
+            { x: 200, y: 450 },
+            { x: 350, y: 450 },
+            { x: 350, y: 100 },
+            { x: 800, y: 100 },
+            { x: 800, y: 250 },
+            { x: 500, y: 250 },
+            { x: 500, y: 500 },
+            { x: 700, y: 500 },
+            { x: 700, y: 550 },
         ],
     },
     enemies: {
         [EnemyType.BASIC]: {
             health: 50,
             speed: 50, // px per second
+            reward: 10, // money given to player when killed
             color: 'darkgray',
         },
         [EnemyType.FAST]: {
             health: 30,
             speed: 100,
+            reward: 15,
             color: 'greenyellow',
         },
         [EnemyType.TANK]: {
             health: 100,
             speed: 30,
+            reward: 25,
             color: 'black',
         },
     },
@@ -102,10 +112,10 @@ export const GAME_CONFIG = {
     },
     towers: {
         [TowerType.ARCHER]: {
-            range: 100, // in pixels
+            range: 125, // in pixels
             damage: 10,
             attackSpeed: 1, // time between attacks in seconds
-            buildCooldown: 15, // seconds before it can be constructed
+            cost: 15, // cost in game currency
             unlockWave: 0, // unlocked from the start
             color: 'lightgreen',
             // multiTarget: false,
@@ -114,17 +124,17 @@ export const GAME_CONFIG = {
             range: 75,
             damage: 30,
             attackSpeed: 2,
-            buildCooldown: 20,
-            unlockWave: 3, // unlocked after wave 3
+            cost: 25,
+            unlockWave: 4, // unlocked at wave 4
             color: 'white',
             // multiTarget: true,
         },
         [TowerType.SNIPER]: {
-            range: 150,
+            range: 175,
             damage: 50,
             attackSpeed: 3,
-            buildCooldown: 30,
-            unlockWave: 6, // unlocked atfter wave 6
+            cost: 50,
+            unlockWave: 1, // unlocked at wave 7
             color: 'indianred',
         },
     },
