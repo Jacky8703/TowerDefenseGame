@@ -1,18 +1,18 @@
 export enum EnemyType {
     BASIC = 'basic',
-    // ADVANCED = 'advanced',
+    FAST = 'fast',
+    TANK = 'tank',
 }
 
 export enum TowerType {
-    BASIC = 'basic',
-    // SNIPER = 'sniper',
+    ARCHER = 'archer',
+    SNIPER = 'sniper',
+    CANNON = 'cannon',
 }
 
-export interface Action {
-    type: 'BUILD_TOWER' | 'NONE';
-    position?: Position; // required if type is BUILD_TOWER
-    towerType?: TowerType; // required if type is BUILD_TOWER
-}
+export type Action =
+    | { type: 'BUILD_TOWER'; towerType: TowerType; position: Position }
+    | { type: 'NONE' };
 
 export interface Position {
     x: number;
@@ -25,7 +25,7 @@ export interface Direction {
 }
 
 export interface Enemy {
-    type: EnemyType;
+    readonly type: EnemyType;
     health: number;
     position: Position;
     currentWaypointIndex: number; // current index of the waypoint to reach
@@ -33,22 +33,22 @@ export interface Enemy {
 }
 
 export interface Wave {
-    enemyType: EnemyType;
-    enemyCount: number;
+    readonly enemyType: EnemyType;
+    readonly enemyCount: number;
 }
 
 export interface Tower {
-    type: TowerType;
-    position: Position;
+    readonly type: TowerType;
+    readonly position: Position;
     fireRate: number;
 }
 
-export interface Projectile {
-    position: Position;
-    target: Enemy;
-    speed: number; // pixels per second
-    damage: number;
-}
+// export interface Projectile {
+//     position: Position;
+//     target: Enemy;
+//     speed: number; // pixels per second
+//     damage: number;
+// }
 
 export const GAME_CONFIG = {
     map: {
@@ -69,25 +69,52 @@ export const GAME_CONFIG = {
         [EnemyType.BASIC]: {
             health: 50,
             speed: 50, // px per second
+            color: 'darkgray',
+        },
+        [EnemyType.FAST]: {
+            health: 30,
+            speed: 100,
+            color: 'greenyellow',
+        },
+        [EnemyType.TANK]: {
+            health: 100,
+            speed: 30,
+            color: 'black',
         },
     },
     waves: {
         waveDelay: 2, // time between waves in seconds
         spawnDelay: 1, // time between spawns in seconds
         list: [
-            { enemyType: EnemyType.BASIC, enemyCount: 3 },
-            //{ enemyType: EnemyType.BASIC, enemyCount: 5 },
-            //{ enemyType: EnemyType.BASIC, enemyCount: 7 },
+            //{ enemyType: EnemyType.BASIC, enemyCount: 3 },
+            //{ enemyType: EnemyType.FAST, enemyCount: 5 },
+            //{ enemyType: EnemyType.TANK, enemyCount: 7 },
         ],
     },
     towers: {
-        [TowerType.BASIC]: {
-            range: 75, // in pixels
+        [TowerType.ARCHER]: {
+            range: 100, // in pixels
             damage: 10,
             attackSpeed: 1, // time between attacks in seconds
             buildCooldown: 15, // seconds before it can be constructed
+            color: 'lightgreen',
             // multiTarget: false,
         },
+        [TowerType.CANNON]: {
+            range: 75,
+            damage: 30,
+            attackSpeed: 2,
+            buildCooldown: 20,
+            color: 'white',
+            // multiTarget: true,
+        },
+        [TowerType.SNIPER]: {
+            range: 150,
+            damage: 50,
+            attackSpeed: 3,
+            buildCooldown: 30,
+            color: 'indianred',
+        },
     },
-    projectileSpeed: 15, // px per second
+    // projectileSpeed: 15, // px per second
 } as const;

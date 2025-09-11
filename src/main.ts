@@ -11,6 +11,48 @@ import { WaveManager } from './managers/WaveManager';
 const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
 canvas.width = GAME_CONFIG.map.width;
 canvas.height = GAME_CONFIG.map.height;
+const rect = canvas.getBoundingClientRect();
+
+let action: Action = { type: 'NONE' };
+let selectedTowerType: TowerType | null = null;
+
+// UI tower buttons
+const towerButtons: HTMLButtonElement[] = [];
+for (const type of Object.values(TowerType)) {
+    const button = document.getElementById(type) as HTMLButtonElement | null;
+    if (!button) throw new Error(`${type} tower button id not found`);
+    button.style.backgroundColor = GAME_CONFIG.towers[type].color;
+    button.addEventListener('click', () => {
+        selectedTowerType = type as TowerType;
+    });
+    towerButtons.push(button);
+}
+
+canvas.addEventListener('click', (event) => {
+    if (selectedTowerType !== null) {
+        // get click position relative to canvas
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        const gridCellIndexX = Math.floor(x / GAME_CONFIG.map.cellSize);
+        const gridCellIndexY = Math.floor(y / GAME_CONFIG.map.cellSize);
+
+        action = {
+            type: 'BUILD_TOWER',
+            // center coordinates
+            position: {
+                x:
+                    GAME_CONFIG.map.cellSize / 2 +
+                    gridCellIndexX * GAME_CONFIG.map.cellSize,
+                y:
+                    GAME_CONFIG.map.cellSize / 2 +
+                    gridCellIndexY * GAME_CONFIG.map.cellSize,
+            },
+            towerType: selectedTowerType,
+        };
+        selectedTowerType = null;
+    }
+});
 
 const map = new GameMap();
 const enemyManager = new EnemyManager(map);
@@ -18,35 +60,10 @@ const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
 // const projectileManager = new ProjectileManager();
 let engine = new GameEngine(map, waveManager, enemyManager, towerManager);
-let renderer = new Renderer(canvas);
-
-let action: Action = { type: 'NONE' };
+let renderer = new Renderer(canvas, towerButtons);
 
 let state: GameState = engine.getState();
 renderer.render(state);
-
-action = {
-    type: 'BUILD_TOWER',
-    towerType: TowerType.BASIC,
-    position: { x: 125, y: 275 },
-};
-engine.step(action);
-action = { type: 'NONE' };
-
-// testing
-// console.log('buildableCells:', map.buildableCells);
-// let countInterval = 0
-// let id = setInterval(() => {
-//     engine.step(action);
-//     state = engine.getState();
-//     console.log("Firerate: %f", state.towers[0].fireRate);
-//     state.enemies.forEach((e, i) => {
-//         console.log("Enemy %d - Health: %f, Position: (%f, %f)", i, e.health, e.position.x, e.position.y);
-//     });
-//     renderer.render(state);
-//     countInterval++;
-//     if (countInterval > 12) clearInterval(id);
-// }, 1000);
 
 function gameloop() {
     engine.step(action);
@@ -56,6 +73,7 @@ function gameloop() {
         console.log('Game Over!');
         return;
     }
+    action = { type: 'NONE' }; // reset action
     requestAnimationFrame(gameloop);
 }
 
