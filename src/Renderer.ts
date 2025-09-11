@@ -18,7 +18,7 @@ export class Renderer {
         this.drawMap(gameState.map);
         this.drawEnemies(gameState.enemies);
         this.drawTowers(gameState.towers, gameState.map.cellSize / 1.5);
-        this.updateButtons(gameState.towerBuildCooldowns);
+        this.updateButtons(gameState.towerBuildCooldowns, gameState.waveNumber);
     }
 
     private drawMap(map: GameMap) {
@@ -112,9 +112,9 @@ export class Renderer {
         });
     }
 
-    private updateButtons(cooldowns: Record<TowerType, number>) {
+    private updateButtons(cooldowns: Record<TowerType, number>, waveNumber: number) {
         this.towerButtons.forEach((button) => {
-            button.disabled = cooldowns[button.id as TowerType] > 0;
+            button.disabled = cooldowns[button.id as TowerType] > 0 || waveNumber < GAME_CONFIG.towers[button.id as TowerType].unlockWave;
             button.textContent = `${button.id} - ${cooldowns[button.id as TowerType].toFixed(1)}`; // show remaining cooldown time
         });
     }

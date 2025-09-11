@@ -83,13 +83,22 @@ export const GAME_CONFIG = {
         },
     },
     waves: {
-        waveDelay: 2, // time between waves in seconds
+        waveDelay: 10, // time between waves in seconds
         spawnDelay: 1, // time between spawns in seconds
         list: [
-            //{ enemyType: EnemyType.BASIC, enemyCount: 3 },
-            //{ enemyType: EnemyType.FAST, enemyCount: 5 },
-            //{ enemyType: EnemyType.TANK, enemyCount: 7 },
+            // first 10 waves
+            { basic: 2, fast: 0, tank: 0 },
+            { basic: 5, fast: 0, tank: 0 },
+            { basic: 5, fast: 2, tank: 0 },
+            { basic: 6, fast: 4, tank: 2 },
+            { basic: 4, fast: 4, tank: 4 },
+            { basic: 6, fast: 8, tank: 0 },
+            { basic: 2, fast: 8, tank: 6 },
+            { basic: 0, fast: 10, tank: 8 },
+            { basic: 10, fast: 0, tank: 8 },
+            { basic: 8, fast: 8, tank: 8 }, // the last wave will be the base for generating further waves
         ],
+        growthFactor: 1.2, // each new wave will have enemyCount * growthFactor enemies
     },
     towers: {
         [TowerType.ARCHER]: {
@@ -97,6 +106,7 @@ export const GAME_CONFIG = {
             damage: 10,
             attackSpeed: 1, // time between attacks in seconds
             buildCooldown: 15, // seconds before it can be constructed
+            unlockWave: 0, // unlocked from the start
             color: 'lightgreen',
             // multiTarget: false,
         },
@@ -105,6 +115,7 @@ export const GAME_CONFIG = {
             damage: 30,
             attackSpeed: 2,
             buildCooldown: 20,
+            unlockWave: 3, // unlocked after wave 3
             color: 'white',
             // multiTarget: true,
         },
@@ -113,6 +124,7 @@ export const GAME_CONFIG = {
             damage: 50,
             attackSpeed: 3,
             buildCooldown: 30,
+            unlockWave: 6, // unlocked atfter wave 6
             color: 'indianred',
         },
     },
