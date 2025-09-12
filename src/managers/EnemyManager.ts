@@ -1,6 +1,4 @@
-import { GameState } from '../core/GameState';
 import {
-    Direction,
     Enemy,
     EnemyType,
     GAME_CONFIG,
@@ -18,7 +16,7 @@ export class EnemyManager {
     update(deltaTime: number, gameEnemies: Enemy[], money: number): number {
         for (let i = gameEnemies.length - 1; i >= 0; i--) {
             // iterate backwards for safe removal
-            if (gameEnemies[i].health <= 0) {
+            if (gameEnemies[i].currentHealth <= 0) {
                 money += GAME_CONFIG.enemies[gameEnemies[i].type].reward;
                 gameEnemies.splice(i, 1);
             } else {
@@ -28,7 +26,7 @@ export class EnemyManager {
         return money;
     }
 
-    spawnEnemy(type: EnemyType, gameEnemies: Enemy[]) {
+    spawnEnemy(type: EnemyType, healthMultiplier: number, speedMultiplier: number, gameEnemies: Enemy[]) {
         const startPosition: Position = {
             x:
                 GAME_CONFIG.map.waypointTopLeftCorners[0].x +
@@ -40,7 +38,9 @@ export class EnemyManager {
 
         gameEnemies.push({
             type: type,
-            health: GAME_CONFIG.enemies[type].health,
+            fullHealth: GAME_CONFIG.enemies[type].health * healthMultiplier,
+            currentHealth: GAME_CONFIG.enemies[type].health * healthMultiplier,
+            currentSpeed: GAME_CONFIG.enemies[type].speed * speedMultiplier,
             position: startPosition,
             currentWaypointIndex: 1,
             pathProgress: 0,
@@ -48,7 +48,7 @@ export class EnemyManager {
     }
 
     private move(enemy: Enemy, deltaTime: number) {
-        const movement = GAME_CONFIG.enemies[enemy.type].speed * deltaTime;
+        const movement = enemy.currentSpeed * deltaTime;
         const direction =
             this.map.path.waypoints[enemy.currentWaypointIndex - 1]
                 .nextDirection;

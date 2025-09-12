@@ -6,6 +6,8 @@ interface InfoPanel{
     moneyDisplay: HTMLElement;
     waveDisplay: HTMLElement;
     towerButtons: HTMLButtonElement[];
+    gameOverScreen: HTMLElement;
+    finalWaveNumber: HTMLElement;
 }
 
 export class Renderer {
@@ -21,7 +23,9 @@ export class Renderer {
         this.infoPanel = {
             moneyDisplay: document.getElementById('money-display')!,
             waveDisplay: document.getElementById('wave-display')!,
-            towerButtons: []
+            towerButtons: [],
+            gameOverScreen: document.getElementById('game-over-screen')!,
+            finalWaveNumber: document.getElementById('final-wave-number')!,
         };
         this.selectedTowerType = null;
         this.action = { type: 'NONE' };
@@ -47,7 +51,7 @@ export class Renderer {
         this.drawMap(gameState.map);
         this.drawEnemies(gameState.enemies);
         this.drawTowers(gameState.towers, gameState.map.cellSize / 1.5);
-        this.updateInfoPanel(gameState.money, gameState.waveNumber);
+        this.updateInfoPanel(gameState.money, gameState.waveNumber, gameState.gameOver);
     }
 
     private manageInput() {
@@ -79,7 +83,12 @@ export class Renderer {
         });
     };
 
-    private updateInfoPanel(money: number, waveNumber: number) {
+    private updateInfoPanel(money: number, waveNumber: number, gameOver: boolean) {
+        if (gameOver) {        
+            this.infoPanel.finalWaveNumber.textContent = waveNumber.toString();
+            this.infoPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
+            return;
+        }
         this.infoPanel.moneyDisplay.textContent = `Money: $${money}`;
         this.infoPanel.waveDisplay.textContent = `Wave: ${waveNumber}`;
         this.infoPanel.towerButtons.forEach((button) => {
@@ -139,8 +148,7 @@ export class Renderer {
             this.ctx.fill();
 
             // 2. Calculate health percentage
-            const healthPercent =
-                enemy.health / GAME_CONFIG.enemies[enemy.type].health;
+            const healthPercent = enemy.currentHealth / enemy.fullHealth;
 
             // 3. Calculate health bar position (above the enemy)
             const barX = enemy.position.x - barWidth / 2;

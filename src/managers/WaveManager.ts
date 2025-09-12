@@ -2,14 +2,17 @@ import {
     Enemy,
     EnemyType,
     GAME_CONFIG,
-    Position,
-    Wave,
 } from '../core/GameConfig';
 import { EnemyManager } from './EnemyManager';
 
 enum WaveState {
     WAITING = 'waiting',
     SPAWNING = 'spawning',
+}
+
+interface Multipliers {
+    enemyHealth: number;
+    enemySpeed: number;
 }
 
 export class WaveManager {
@@ -19,6 +22,7 @@ export class WaveManager {
     private currentEnemyCount: Record<EnemyType, number>;
     private waveDelay: number;
     private spawnDelay: number;
+    private multipliers: Multipliers;
 
     constructor(enemyManager: EnemyManager) {
         this.enemyManager = enemyManager;
@@ -31,6 +35,10 @@ export class WaveManager {
         };
         this.waveDelay = GAME_CONFIG.waves.waveDelay;
         this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
+        this.multipliers = {
+            enemyHealth: 1,
+            enemySpeed: 1,
+        };
     }
 
     update(deltaTime: number, gameEnemies: Enemy[]) {
@@ -47,15 +55,13 @@ export class WaveManager {
 
             case WaveState.SPAWNING:
                 this.spawnDelay -= deltaTime;
-
                 if (this.spawnDelay <= 0) {
                     for (const type of Object.values(EnemyType)) {
                         if (this.currentEnemyCount[type] > 0) {
                             this.spawn(type, gameEnemies);
-                            return;
+                            return; // spawn one enemy at a time
                         }
                     }
-                    // all enemies for this wave have been spawned
                     this.waveState = WaveState.WAITING;
                 }
 
@@ -70,34 +76,25 @@ export class WaveManager {
     }
 
     private spawn(type: EnemyType, gameEnemies: Enemy[]) {
-        this.enemyManager.spawnEnemy(type, gameEnemies);
+        this.enemyManager.spawnEnemy(type, this.multipliers.enemyHealth, this.multipliers.enemySpeed, gameEnemies);
         this.currentEnemyCount[type]--;
         this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
     }
 
     private generateWave(): Record<EnemyType, number> {
+        // update multipliers
         if (this.currentWaveNumber <= GAME_CONFIG.waves.list.length) {
             return {
-                [EnemyType.BASIC]:
-                    GAME_CONFIG.waves.list[this.currentWaveNumber - 1].basic,
-                [EnemyType.FAST]:
-                    GAME_CONFIG.waves.list[this.currentWaveNumber - 1].fast,
-                [EnemyType.TANK]:
-                    GAME_CONFIG.waves.list[this.currentWaveNumber - 1].tank,
+                ...GAME_CONFIG.waves.list[this.currentWaveNumber - 1],
             };
         } else {
-            // create new waves based on the last predefined wave
-            let multiplier = Math.pow(GAME_CONFIG.waves.growthFactor, this.currentWaveNumber-GAME_CONFIG.waves.list.length);
+            // update multipliers
+            const factor = this.currentWaveNumber-GAME_CONFIG.waves.list.length;
+            this.multipliers.enemyHealth = Math.pow(GAME_CONFIG.waves.healthGrowthFactor, factor);
+            this.multipliers.enemySpeed = Math.pow(GAME_CONFIG.waves.speedGrowthFactor, factor);
+            console.log('Wave %d multipliers: health %f. speed %f.', this.currentWaveNumber, this.multipliers.enemyHealth, this.multipliers.enemySpeed);
             return {
-                [EnemyType.BASIC]: Math.ceil(
-                    GAME_CONFIG.waves.list[GAME_CONFIG.waves.list.length - 1].basic * multiplier
-                    ),
-                [EnemyType.FAST]: Math.ceil(
-                    GAME_CONFIG.waves.list[GAME_CONFIG.waves.list.length - 1].fast * multiplier
-                ),
-                [EnemyType.TANK]: Math.ceil(
-                    GAME_CONFIG.waves.list[GAME_CONFIG.waves.list.length - 1].tank * multiplier
-                ),
+                ...GAME_CONFIG.waves.list[GAME_CONFIG.waves.list.length - 1],
             };
         }
     }

@@ -1,7 +1,7 @@
-export enum EnemyType {
+export enum EnemyType { // the order here matters for wave generation
+    TANK = 'tank',
     BASIC = 'basic',
     FAST = 'fast',
-    TANK = 'tank',
 }
 
 export enum TowerType {
@@ -26,7 +26,9 @@ export interface Direction {
 
 export interface Enemy {
     readonly type: EnemyType;
-    health: number;
+    fullHealth: number;
+    currentHealth: number;
+    currentSpeed: number;
     position: Position;
     currentWaypointIndex: number; // current index of the waypoint to reach
     pathProgress: number; // progress along the path, from 0 to 1
@@ -43,15 +45,8 @@ export interface Tower {
     fireRate: number;
 }
 
-// export interface Projectile {
-//     position: Position;
-//     target: Enemy;
-//     speed: number; // pixels per second
-//     damage: number;
-// }
-
 export const GAME_CONFIG = {
-    initialMoney: 30,
+    initialMoney: 40,
     map: {
         width: 900,
         height: 600,
@@ -74,69 +69,67 @@ export const GAME_CONFIG = {
     },
     enemies: {
         [EnemyType.BASIC]: {
-            health: 50,
-            speed: 50, // px per second
-            reward: 10, // money given to player when killed
+            health: 40,
+            speed: 60, // px per second
+            reward: 2, // money for killing
             color: 'darkgray',
         },
         [EnemyType.FAST]: {
             health: 30,
-            speed: 100,
-            reward: 15,
+            speed: 90,
+            reward: 2,
             color: 'greenyellow',
         },
         [EnemyType.TANK]: {
-            health: 100,
-            speed: 30,
-            reward: 25,
+            health: 150,
+            speed: 40,
+            reward: 2,
             color: 'black',
         },
     },
     waves: {
-        waveDelay: 10, // time between waves in seconds
+        waveDelay: 12, // time between waves in seconds
         spawnDelay: 1, // time between spawns in seconds
         list: [
             // first 10 waves
             { basic: 2, fast: 0, tank: 0 },
             { basic: 5, fast: 0, tank: 0 },
             { basic: 5, fast: 2, tank: 0 },
-            { basic: 6, fast: 4, tank: 2 },
-            { basic: 4, fast: 4, tank: 4 },
-            { basic: 6, fast: 8, tank: 0 },
-            { basic: 2, fast: 8, tank: 6 },
-            { basic: 0, fast: 10, tank: 8 },
-            { basic: 10, fast: 0, tank: 8 },
-            { basic: 8, fast: 8, tank: 8 }, // the last wave will be the base for generating further waves
+            { basic: 5, fast: 3, tank: 1 },
+            { basic: 2, fast: 4, tank: 2 },
+            { basic: 2, fast: 6, tank: 3 },
+            { basic: 2, fast: 8, tank: 3 },
+            { basic: 0, fast: 6, tank: 6 },
+            { basic: 0, fast: 7, tank: 7 },
+            { basic: 0, fast: 6, tank: 9 }, // the last wave will be repeated with increasing difficulty
         ],
-        growthFactor: 1.2, // each new wave will have enemyCount * growthFactor enemies
+        healthGrowthFactor: 1.2, // enemy health multiplier every wave after the predefined ones
+        speedGrowthFactor: 1.1, // enemy speed multiplier every wave after the predefined ones
     },
     towers: {
         [TowerType.ARCHER]: {
             range: 125, // in pixels
             damage: 10,
             attackSpeed: 1, // time between attacks in seconds
-            cost: 15, // cost in game currency
+            cost: 20, // cost in game currency
             unlockWave: 0, // unlocked from the start
             color: 'lightgreen',
-            // multiTarget: false,
         },
         [TowerType.CANNON]: {
             range: 75,
-            damage: 30,
+            damage: 75,
             attackSpeed: 2,
-            cost: 25,
-            unlockWave: 4, // unlocked at wave 4
+            cost: 35,
+            unlockWave: 4,
             color: 'white',
-            // multiTarget: true,
         },
         [TowerType.SNIPER]: {
             range: 175,
-            damage: 50,
+            damage: 75,
             attackSpeed: 3,
             cost: 50,
-            unlockWave: 1, // unlocked at wave 7
+            unlockWave: 7,
             color: 'indianred',
         },
     },
-    // projectileSpeed: 15, // px per second
 } as const;

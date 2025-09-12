@@ -1,5 +1,4 @@
 import { EnemyManager } from '../managers/EnemyManager';
-import { ProjectileManager } from '../managers/ProjectileManager';
 import { TowerManager } from '../managers/TowerManager';
 import { WaveManager } from '../managers/WaveManager';
 import { Action, GAME_CONFIG, TowerType } from './GameConfig';
@@ -11,7 +10,6 @@ export class GameEngine {
     private waveManager: WaveManager;
     private enemyManager: EnemyManager;
     private towerManager: TowerManager;
-    private projectileManager?: ProjectileManager;
     private lastUpdateTime: number;
     private deltaTime: number;
 
@@ -20,7 +18,6 @@ export class GameEngine {
         waveManager: WaveManager,
         enemyManager: EnemyManager,
         towerManager: TowerManager,
-        projectileManager?: ProjectileManager
     ) {
         this.currentState = {
             gameTime: 0,
@@ -28,14 +25,12 @@ export class GameEngine {
             map: map,
             enemies: [],
             towers: [],
-            // projectiles: [],
             money: GAME_CONFIG.initialMoney,
             gameOver: false,
         };
         this.waveManager = waveManager;
         this.enemyManager = enemyManager;
         this.towerManager = towerManager;
-        this.projectileManager = projectileManager;
         this.lastUpdateTime = Date.now();
         this.deltaTime = 0;
     }
@@ -63,7 +58,6 @@ export class GameEngine {
             this.currentState.towers,
             this.currentState.enemies
         );
-        //this.projectileManager.update(this.deltaTime);
         // update game state
         this.currentState.waveNumber = this.waveManager.getWaveNumber();
         this.currentState.gameTime += this.deltaTime;

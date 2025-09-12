@@ -76,7 +76,7 @@ export class TowerManager {
                         target = enemiesInRange[i];
                     }
                 }
-                target.health -= GAME_CONFIG.towers[t.type].damage;
+                target.currentHealth -= GAME_CONFIG.towers[t.type].damage;
                 t.fireRate = GAME_CONFIG.towers[t.type].attackSpeed; // reset fire rate
             }
         });
