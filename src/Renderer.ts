@@ -1,8 +1,14 @@
-import { Action, Enemy, GAME_CONFIG, Tower, TowerType } from './core/GameConfig';
+import {
+    Action,
+    Enemy,
+    GAME_CONFIG,
+    Tower,
+    TowerType,
+} from './core/GameConfig';
 import { GameMap } from './core/GameMap';
 import { GameState } from './core/GameState';
 
-interface InfoPanel{
+interface InfoPanel {
     moneyDisplay: HTMLElement;
     waveDisplay: HTMLElement;
     towerButtons: HTMLButtonElement[];
@@ -18,7 +24,9 @@ export class Renderer {
     action: Action;
 
     constructor() {
-        this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
+        this.canvas = document.getElementById(
+            'gameCanvas'
+        ) as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d')!;
         this.infoPanel = {
             moneyDisplay: document.getElementById('money-display')!,
@@ -34,7 +42,9 @@ export class Renderer {
         this.canvas.height = GAME_CONFIG.map.height;
 
         for (const type of Object.values(TowerType)) {
-            const button = document.getElementById(type) as HTMLButtonElement | null;
+            const button = document.getElementById(
+                type
+            ) as HTMLButtonElement | null;
             if (!button) throw new Error(`${type} tower button id not found`);
             button.style.border = `2px solid ${GAME_CONFIG.towers[type as TowerType].color}`;
             button.addEventListener('click', () => {
@@ -51,7 +61,11 @@ export class Renderer {
         this.drawMap(gameState.map);
         this.drawEnemies(gameState.enemies);
         this.drawTowers(gameState.towers, gameState.map.cellSize / 1.5);
-        this.updateInfoPanel(gameState.money, gameState.waveNumber, gameState.gameOver);
+        this.updateInfoPanel(
+            gameState.money,
+            gameState.waveNumber,
+            gameState.gameOver
+        );
     }
 
     private manageInput() {
@@ -79,12 +93,16 @@ export class Renderer {
                     towerType: this.selectedTowerType,
                 };
                 this.selectedTowerType = null;
-            };
+            }
         });
-    };
+    }
 
-    private updateInfoPanel(money: number, waveNumber: number, gameOver: boolean) {
-        if (gameOver) {        
+    private updateInfoPanel(
+        money: number,
+        waveNumber: number,
+        gameOver: boolean
+    ) {
+        if (gameOver) {
             this.infoPanel.finalWaveNumber.textContent = waveNumber.toString();
             this.infoPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
             return;
@@ -92,7 +110,10 @@ export class Renderer {
         this.infoPanel.moneyDisplay.textContent = `Money: $${money}`;
         this.infoPanel.waveDisplay.textContent = `Wave: ${waveNumber}`;
         this.infoPanel.towerButtons.forEach((button) => {
-            button.disabled = money < GAME_CONFIG.towers[button.id as TowerType].cost || waveNumber < GAME_CONFIG.towers[button.id as TowerType].unlockWave;
+            button.disabled =
+                money < GAME_CONFIG.towers[button.id as TowerType].cost ||
+                waveNumber <
+                    GAME_CONFIG.towers[button.id as TowerType].unlockWave;
             button.textContent = `${button.id} - $${GAME_CONFIG.towers[button.id as TowerType].cost}`; // show tower cost
         });
     }
@@ -186,5 +207,4 @@ export class Renderer {
             this.ctx.stroke();
         });
     }
-
 }

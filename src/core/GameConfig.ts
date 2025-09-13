@@ -1,4 +1,5 @@
-export enum EnemyType { // the order here matters for wave generation
+export enum EnemyType {
+    // the order here matters for wave generation
     TANK = 'tank',
     BASIC = 'basic',
     FAST = 'fast',
@@ -34,11 +35,6 @@ export interface Enemy {
     pathProgress: number; // progress along the path, from 0 to 1
 }
 
-export interface Wave {
-    readonly enemyType: EnemyType;
-    readonly enemyCount: number;
-}
-
 export interface Tower {
     readonly type: TowerType;
     readonly position: Position;
@@ -50,9 +46,9 @@ export const GAME_CONFIG = {
     map: {
         width: 900,
         height: 600,
-        cellSize: 50, // size of each grid cell in pixels, must be a point coordinate divisor -> add a check for this
+        cellSize: 50, // size of each grid cell in pixels, must be a point coordinate divisor
         waypointTopLeftCorners: [
-            // must be aligned horizontally or vertically -> add a check for this
+            // must be aligned horizontally or vertically
             { x: 50, y: 0 },
             { x: 50, y: 300 },
             { x: 200, y: 300 },

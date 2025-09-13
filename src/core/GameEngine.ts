@@ -1,15 +1,15 @@
 import { EnemyManager } from '../managers/EnemyManager';
 import { TowerManager } from '../managers/TowerManager';
 import { WaveManager } from '../managers/WaveManager';
-import { Action, GAME_CONFIG, TowerType } from './GameConfig';
+import { Action, GAME_CONFIG } from './GameConfig';
 import { GameMap } from './GameMap';
 import { GameState } from './GameState';
 
 export class GameEngine {
+    private readonly waveManager: WaveManager;
+    private readonly enemyManager: EnemyManager;
+    private readonly towerManager: TowerManager;
     private currentState: GameState;
-    private waveManager: WaveManager;
-    private enemyManager: EnemyManager;
-    private towerManager: TowerManager;
     private lastUpdateTime: number;
     private deltaTime: number;
 
@@ -17,8 +17,11 @@ export class GameEngine {
         map: GameMap,
         waveManager: WaveManager,
         enemyManager: EnemyManager,
-        towerManager: TowerManager,
+        towerManager: TowerManager
     ) {
+        this.waveManager = waveManager;
+        this.enemyManager = enemyManager;
+        this.towerManager = towerManager;
         this.currentState = {
             gameTime: 0,
             waveNumber: 0,
@@ -28,9 +31,6 @@ export class GameEngine {
             money: GAME_CONFIG.initialMoney,
             gameOver: false,
         };
-        this.waveManager = waveManager;
-        this.enemyManager = enemyManager;
-        this.towerManager = towerManager;
         this.lastUpdateTime = Date.now();
         this.deltaTime = 0;
     }
@@ -52,7 +52,11 @@ export class GameEngine {
         }
         // update all managers
         this.waveManager.update(this.deltaTime, this.currentState.enemies);
-        this.currentState.money = this.enemyManager.update(this.deltaTime, this.currentState.enemies, this.currentState.money);
+        this.currentState.money = this.enemyManager.update(
+            this.deltaTime,
+            this.currentState.enemies,
+            this.currentState.money
+        );
         this.towerManager.update(
             this.deltaTime,
             this.currentState.towers,

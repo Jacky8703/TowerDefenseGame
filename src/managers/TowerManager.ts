@@ -14,11 +14,7 @@ export class TowerManager {
         this.map = gameMap;
     }
 
-    update(
-        deltaTime: number,
-        towers: Tower[],
-        enemies: Enemy[],
-    ) {
+    update(deltaTime: number, towers: Tower[], enemies: Enemy[]) {
         towers.forEach((t) => {
             t.fireRate = Math.max(0, t.fireRate - deltaTime);
         });
@@ -29,7 +25,7 @@ export class TowerManager {
         type: TowerType,
         position: Position,
         towers: Tower[],
-        money: number,
+        money: number
     ): number {
         if (money < GAME_CONFIG.towers[type].cost) {
             console.log('not enough money to build tower');
@@ -45,7 +41,9 @@ export class TowerManager {
                     t.position.x === position.x && t.position.y === position.y
             )
         ) {
-            console.log(`tower build position (${position.x}, ${position.y}) not valid`);
+            console.log(
+                `tower build position (${position.x}, ${position.y}) not valid`
+            );
             return money;
         }
 
@@ -61,7 +59,7 @@ export class TowerManager {
     private findAndAttackEnemyInRange(towers: Tower[], enemies: Enemy[]) {
         towers.forEach((t) => {
             if (t.fireRate <= 0) {
-                let enemiesInRange = enemies.filter(
+                const enemiesInRange = enemies.filter(
                     (e) =>
                         this.map.calculateDistanceBetweenPoints(
                             t.position,

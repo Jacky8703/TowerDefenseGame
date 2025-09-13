@@ -10,10 +10,10 @@ const map = new GameMap();
 const enemyManager = new EnemyManager(map);
 const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
-let engine = new GameEngine(map, waveManager, enemyManager, towerManager);
-let renderer = new Renderer();
-
+const engine = new GameEngine(map, waveManager, enemyManager, towerManager);
 let state: GameState = engine.getState();
+
+const renderer = new Renderer();
 renderer.render(state);
 
 function gameloop() {

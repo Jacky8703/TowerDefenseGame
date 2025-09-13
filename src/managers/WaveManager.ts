@@ -1,8 +1,4 @@
-import {
-    Enemy,
-    EnemyType,
-    GAME_CONFIG,
-} from '../core/GameConfig';
+import { Enemy, EnemyType, GAME_CONFIG } from '../core/GameConfig';
 import { EnemyManager } from './EnemyManager';
 
 enum WaveState {
@@ -28,17 +24,17 @@ export class WaveManager {
         this.enemyManager = enemyManager;
         this.waveState = WaveState.WAITING;
         this.currentWaveNumber = 0;
-        this.currentEnemyCount = {
-            [EnemyType.BASIC]: 0,
-            [EnemyType.FAST]: 0,
-            [EnemyType.TANK]: 0,
-        };
+        this.currentEnemyCount = {} as Record<EnemyType, number>;
         this.waveDelay = GAME_CONFIG.waves.waveDelay;
         this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
         this.multipliers = {
             enemyHealth: 1,
             enemySpeed: 1,
         };
+
+        for (const type of Object.values(EnemyType)) {
+            this.currentEnemyCount[type] = 0;
+        }
     }
 
     update(deltaTime: number, gameEnemies: Enemy[]) {
@@ -76,7 +72,12 @@ export class WaveManager {
     }
 
     private spawn(type: EnemyType, gameEnemies: Enemy[]) {
-        this.enemyManager.spawnEnemy(type, this.multipliers.enemyHealth, this.multipliers.enemySpeed, gameEnemies);
+        this.enemyManager.spawnEnemy(
+            type,
+            this.multipliers.enemyHealth,
+            this.multipliers.enemySpeed,
+            gameEnemies
+        );
         this.currentEnemyCount[type]--;
         this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
     }
@@ -89,10 +90,22 @@ export class WaveManager {
             };
         } else {
             // update multipliers
-            const factor = this.currentWaveNumber-GAME_CONFIG.waves.list.length;
-            this.multipliers.enemyHealth = Math.pow(GAME_CONFIG.waves.healthGrowthFactor, factor);
-            this.multipliers.enemySpeed = Math.pow(GAME_CONFIG.waves.speedGrowthFactor, factor);
-            console.log('Wave %d multipliers: health %f. speed %f.', this.currentWaveNumber, this.multipliers.enemyHealth, this.multipliers.enemySpeed);
+            const factor =
+                this.currentWaveNumber - GAME_CONFIG.waves.list.length;
+            this.multipliers.enemyHealth = Math.pow(
+                GAME_CONFIG.waves.healthGrowthFactor,
+                factor
+            );
+            this.multipliers.enemySpeed = Math.pow(
+                GAME_CONFIG.waves.speedGrowthFactor,
+                factor
+            );
+            console.log(
+                'Wave %d multipliers: health %f. speed %f.',
+                this.currentWaveNumber,
+                this.multipliers.enemyHealth,
+                this.multipliers.enemySpeed
+            );
             return {
                 ...GAME_CONFIG.waves.list[GAME_CONFIG.waves.list.length - 1],
             };

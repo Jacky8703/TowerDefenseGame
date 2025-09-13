@@ -2,8 +2,8 @@ import { Direction, GAME_CONFIG, Position } from './GameConfig';
 
 interface Waypoint {
     position: Position;
-    nextDirection: Direction;
-    distanceFromStart: number; // pixels
+    readonly nextDirection: Direction;
+    readonly distanceFromStart: number; // pixels
 }
 
 interface Path {
@@ -20,6 +20,7 @@ export class GameMap {
     readonly buildableCells: Position[];
 
     constructor() {
+        this.validateWaypointsConfig();
         this.width = GAME_CONFIG.map.width;
         this.height = GAME_CONFIG.map.height;
         this.cellSize = GAME_CONFIG.map.cellSize;
@@ -33,6 +34,43 @@ export class GameMap {
         return Math.sqrt(
             Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2)
         );
+    }
+
+    private validateWaypointsConfig() {
+        for (
+            let i = 0;
+            i < GAME_CONFIG.map.waypointTopLeftCorners.length;
+            i++
+        ) {
+            const curr = GAME_CONFIG.map.waypointTopLeftCorners[i];
+            const next = GAME_CONFIG.map.waypointTopLeftCorners[i + 1];
+            if (
+                curr.x % GAME_CONFIG.map.cellSize !== 0 ||
+                curr.y % GAME_CONFIG.map.cellSize !== 0
+            ) {
+                throw new Error(
+                    `waypoint ${i} coordinates must be a multiple of cell size ${GAME_CONFIG.map.cellSize}`
+                );
+            }
+            if (
+                curr.x < 0 ||
+                curr.x > GAME_CONFIG.map.width - GAME_CONFIG.map.cellSize ||
+                curr.y < 0 ||
+                curr.y > GAME_CONFIG.map.height - GAME_CONFIG.map.cellSize
+            ) {
+                throw new Error(
+                    `waypoint ${i} coordinates must be within the map boundaries`
+                );
+            }
+            if (i < GAME_CONFIG.map.waypointTopLeftCorners.length - 1) {
+                // skip last waypoint
+                if (curr.x !== next.x && curr.y !== next.y) {
+                    throw new Error(
+                        `waypoints ${i} and ${i + 1} must be aligned horizontally or vertically`
+                    );
+                }
+            }
+        }
     }
 
     private getDirectionBetweenPoints(from: Position, to: Position): Direction {

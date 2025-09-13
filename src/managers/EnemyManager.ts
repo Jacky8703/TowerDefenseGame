@@ -1,9 +1,4 @@
-import {
-    Enemy,
-    EnemyType,
-    GAME_CONFIG,
-    Position,
-} from '../core/GameConfig';
+import { Enemy, EnemyType, GAME_CONFIG, Position } from '../core/GameConfig';
 import { GameMap } from '../core/GameMap';
 
 export class EnemyManager {
@@ -26,7 +21,12 @@ export class EnemyManager {
         return money;
     }
 
-    spawnEnemy(type: EnemyType, healthMultiplier: number, speedMultiplier: number, gameEnemies: Enemy[]) {
+    spawnEnemy(
+        type: EnemyType,
+        healthMultiplier: number,
+        speedMultiplier: number,
+        gameEnemies: Enemy[]
+    ) {
         const startPosition: Position = {
             x:
                 GAME_CONFIG.map.waypointTopLeftCorners[0].x +
@@ -56,14 +56,24 @@ export class EnemyManager {
         enemy.position.y += movement * direction.dy;
 
         let waypointReached = false;
-        const targetWaypoint = this.map.path.waypoints[enemy.currentWaypointIndex];
+        const targetWaypoint =
+            this.map.path.waypoints[enemy.currentWaypointIndex];
         if (direction.dx > 0 && enemy.position.x >= targetWaypoint.position.x) {
             waypointReached = true; // >
-        } else if (direction.dx < 0 && enemy.position.x <= targetWaypoint.position.x) {
+        } else if (
+            direction.dx < 0 &&
+            enemy.position.x <= targetWaypoint.position.x
+        ) {
             waypointReached = true; // <
-        } else if (direction.dy > 0 && enemy.position.y >= targetWaypoint.position.y) {
+        } else if (
+            direction.dy > 0 &&
+            enemy.position.y >= targetWaypoint.position.y
+        ) {
             waypointReached = true; // v
-        } else if (direction.dy < 0 && enemy.position.y <= targetWaypoint.position.y) {
+        } else if (
+            direction.dy < 0 &&
+            enemy.position.y <= targetWaypoint.position.y
+        ) {
             waypointReached = true; // ^
         }
         if (waypointReached) {
