@@ -1,5 +1,5 @@
-import { Enemy, Tower } from '../core/GameConfig';
-import { GameMap } from './GameMap';
+import { Enemy, Tower } from '../core/GameConfig.js';
+import { GameMap } from './GameMap.js';
 
 export interface GameState {
     gameTime: number;

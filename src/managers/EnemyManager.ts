@@ -1,5 +1,5 @@
-import { Enemy, EnemyType, GAME_CONFIG, Position } from '../core/GameConfig';
-import { GameMap } from '../core/GameMap';
+import { Enemy, EnemyType, GAME_CONFIG, Position } from '../core/GameConfig.js';
+import { GameMap } from '../core/GameMap.js';
 
 export class EnemyManager {
     private readonly map: GameMap;

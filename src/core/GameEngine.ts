@@ -1,9 +1,9 @@
-import { EnemyManager } from '../managers/EnemyManager';
-import { TowerManager } from '../managers/TowerManager';
-import { WaveManager } from '../managers/WaveManager';
-import { Action, GAME_CONFIG } from './GameConfig';
-import { GameMap } from './GameMap';
-import { GameState } from './GameState';
+import { EnemyManager } from '../managers/EnemyManager.js';
+import { TowerManager } from '../managers/TowerManager.js';
+import { WaveManager } from '../managers/WaveManager.js';
+import { Action, GAME_CONFIG } from './GameConfig.js';
+import { GameMap } from './GameMap.js';
+import { GameState } from './GameState.js';
 
 export class GameEngine {
     private readonly waveManager: WaveManager;
@@ -72,6 +72,21 @@ export class GameEngine {
 
     getState(): GameState {
         return this.currentState;
+    }
+
+    reset() {
+        this.currentState = {
+            gameTime: 0,
+            waveNumber: 0,
+            map: this.currentState.map,
+            enemies: [],
+            towers: [],
+            money: GAME_CONFIG.initialMoney,
+            gameOver: false,
+        };
+        this.lastUpdateTime = Date.now();
+        this.deltaTime = 0;
+        this.waveManager.reset();
     }
 
     private checkGameOver(): boolean {

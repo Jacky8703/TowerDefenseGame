@@ -1,5 +1,5 @@
-import { Enemy, EnemyType, GAME_CONFIG } from '../core/GameConfig';
-import { EnemyManager } from './EnemyManager';
+import { Enemy, EnemyType, GAME_CONFIG } from '../core/GameConfig.js';
+import { EnemyManager } from './EnemyManager.js';
 
 enum WaveState {
     WAITING = 'waiting',
@@ -71,6 +71,20 @@ export class WaveManager {
         return this.currentWaveNumber;
     }
 
+    reset() {
+        this.waveState = WaveState.WAITING;
+        this.currentWaveNumber = 0;
+        for (const type of Object.values(EnemyType)) {
+            this.currentEnemyCount[type] = 0;
+        }
+        this.waveDelay = GAME_CONFIG.waves.waveDelay;
+        this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
+        this.multipliers = {
+            enemyHealth: 1,
+            enemySpeed: 1,
+        };
+    }
+
     private spawn(type: EnemyType, gameEnemies: Enemy[]) {
         this.enemyManager.spawnEnemy(
             type,
@@ -99,12 +113,6 @@ export class WaveManager {
             this.multipliers.enemySpeed = Math.pow(
                 GAME_CONFIG.waves.speedGrowthFactor,
                 factor
-            );
-            console.log(
-                'Wave %d multipliers: health %f. speed %f.',
-                this.currentWaveNumber,
-                this.multipliers.enemyHealth,
-                this.multipliers.enemySpeed
             );
             return {
                 ...GAME_CONFIG.waves.list[GAME_CONFIG.waves.list.length - 1],

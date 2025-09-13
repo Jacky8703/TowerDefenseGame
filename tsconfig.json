@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "ESNext",
+    "target": "es2022",
+    "module": "nodenext",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "nodenext",
     "outDir": "dist",
     "rootDir": "src",
     "skipLibCheck": true,
-    "lib": ["DOM", "ES2017"]
+    "lib": ["DOM", "ES2022"]
   },
   "include": ["src", "vite.config.js"]
 }

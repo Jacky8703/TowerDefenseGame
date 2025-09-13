@@ -1,10 +1,10 @@
-import { GameMap } from './core/GameMap';
-import { Renderer } from './Renderer';
-import { GameState } from './core/GameState';
-import { GameEngine } from './core/GameEngine';
-import { TowerManager } from './managers/TowerManager';
-import { EnemyManager } from './managers/EnemyManager';
-import { WaveManager } from './managers/WaveManager';
+import { GameMap } from './core/GameMap.js';
+import { Renderer } from './Renderer.js';
+import { GameState } from './core/GameState.js';
+import { GameEngine } from './core/GameEngine.js';
+import { TowerManager } from './managers/TowerManager.js';
+import { EnemyManager } from './managers/EnemyManager.js';
+import { WaveManager } from './managers/WaveManager.js';
 
 const map = new GameMap();
 const enemyManager = new EnemyManager(map);

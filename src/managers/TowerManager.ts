@@ -4,8 +4,8 @@ import {
     Position,
     Tower,
     TowerType,
-} from '../core/GameConfig';
-import { GameMap } from '../core/GameMap';
+} from '../core/GameConfig.js';
+import { GameMap } from '../core/GameMap.js';
 
 export class TowerManager {
     private readonly map: GameMap;
@@ -28,8 +28,9 @@ export class TowerManager {
         money: number
     ): number {
         if (money < GAME_CONFIG.towers[type].cost) {
-            console.log('not enough money to build tower');
-            return money;
+            throw new Error(
+                `not enough money (${money}) to build tower of type ${type}`
+            );
         }
         // validate position
         if (
@@ -41,10 +42,9 @@ export class TowerManager {
                     t.position.x === position.x && t.position.y === position.y
             )
         ) {
-            console.log(
+            throw new Error(
                 `tower build position (${position.x}, ${position.y}) not valid`
             );
-            return money;
         }
 
         towers.push({

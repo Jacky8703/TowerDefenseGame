@@ -4,9 +4,9 @@ import {
     GAME_CONFIG,
     Tower,
     TowerType,
-} from './core/GameConfig';
-import { GameMap } from './core/GameMap';
-import { GameState } from './core/GameState';
+} from './core/GameConfig.js';
+import { GameMap } from './core/GameMap.js';
+import { GameState } from './core/GameState.js';
 
 interface InfoPanel {
     moneyDisplay: HTMLElement;

@@ -1,4 +1,4 @@
-import { Direction, GAME_CONFIG, Position } from './GameConfig';
+import { Direction, GAME_CONFIG, Position } from './GameConfig.js';
 
 interface Waypoint {
     position: Position;
@@ -101,7 +101,7 @@ export class GameMap {
             next = waypointsPos[i + 1];
             fullPath.push(curr);
             direction = this.getDirectionBetweenPoints(curr, next);
-            length = this.calculateDistanceBetweenPoints(curr, next);
+            const length = this.calculateDistanceBetweenPoints(curr, next);
             waypoints.push({
                 position: waypointsPos[i],
                 nextDirection: direction,
