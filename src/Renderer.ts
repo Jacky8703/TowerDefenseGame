@@ -17,13 +17,15 @@ interface InfoPanel {
 }
 
 export class Renderer {
+    private map: GameMap;
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private infoPanel: InfoPanel;
     private selectedTowerType: TowerType | null;
     action: Action;
 
-    constructor() {
+    constructor(map: GameMap) {
+        this.map = map;
         this.canvas = document.getElementById(
             'gameCanvas'
         ) as HTMLCanvasElement;
@@ -57,10 +59,10 @@ export class Renderer {
     }
 
     render(gameState: GameState) {
-        this.drawPath(gameState.map);
-        this.drawMap(gameState.map);
+        this.drawPath();
+        this.drawMap();
         this.drawEnemies(gameState.enemies);
-        this.drawTowers(gameState.towers, gameState.map.cellSize / 1.5);
+        this.drawTowers(gameState.towers, this.map.cellSize / 1.5);
         this.updateInfoPanel(
             gameState.money,
             gameState.waveNumber,
@@ -76,19 +78,19 @@ export class Renderer {
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
 
-                const gridCellIndexX = Math.floor(x / GAME_CONFIG.map.cellSize);
-                const gridCellIndexY = Math.floor(y / GAME_CONFIG.map.cellSize);
+                const gridCellIndexX = Math.floor(x / this.map.cellSize);
+                const gridCellIndexY = Math.floor(y / this.map.cellSize);
 
                 this.action = {
                     type: 'BUILD_TOWER',
                     // center coordinates
                     position: {
                         x:
-                            GAME_CONFIG.map.cellSize / 2 +
-                            gridCellIndexX * GAME_CONFIG.map.cellSize,
+                            this.map.cellSize / 2 +
+                            gridCellIndexX * this.map.cellSize,
                         y:
-                            GAME_CONFIG.map.cellSize / 2 +
-                            gridCellIndexY * GAME_CONFIG.map.cellSize,
+                            this.map.cellSize / 2 +
+                            gridCellIndexY * this.map.cellSize,
                     },
                     towerType: this.selectedTowerType,
                 };
@@ -118,34 +120,34 @@ export class Renderer {
         });
     }
 
-    private drawPath(map: GameMap) {
+    private drawPath() {
         this.ctx.fillStyle = 'saddlebrown';
-        map.path.allCells.forEach((cell) => {
+        this.map.path.allCells.forEach((cell) => {
             this.ctx.fillRect(
-                cell.x - map.cellSize / 2,
-                cell.y - map.cellSize / 2,
-                map.cellSize,
-                map.cellSize
+                cell.x - this.map.cellSize / 2,
+                cell.y - this.map.cellSize / 2,
+                this.map.cellSize,
+                this.map.cellSize
             ); // top-left corner coordinates
         });
     }
 
-    private drawMap(map: GameMap) {
+    private drawMap() {
         this.ctx.fillStyle = 'forestgreen';
-        map.buildableCells.forEach((cell) => {
+        this.map.buildableCells.forEach((cell) => {
             this.ctx.fillRect(
-                cell.x - map.cellSize / 2,
-                cell.y - map.cellSize / 2,
-                map.cellSize,
-                map.cellSize
+                cell.x - this.map.cellSize / 2,
+                cell.y - this.map.cellSize / 2,
+                this.map.cellSize,
+                this.map.cellSize
             ); // top-left corner coordinates
             this.ctx.strokeStyle = 'black';
             this.ctx.lineWidth = 1;
             this.ctx.strokeRect(
-                cell.x - map.cellSize / 2,
-                cell.y - map.cellSize / 2,
-                map.cellSize,
-                map.cellSize
+                cell.x - this.map.cellSize / 2,
+                cell.y - this.map.cellSize / 2,
+                this.map.cellSize,
+                this.map.cellSize
             );
         });
     }

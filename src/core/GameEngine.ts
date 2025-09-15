@@ -2,7 +2,6 @@ import { EnemyManager } from '../managers/EnemyManager.js';
 import { TowerManager } from '../managers/TowerManager.js';
 import { WaveManager } from '../managers/WaveManager.js';
 import { Action, GAME_CONFIG } from './GameConfig.js';
-import { GameMap } from './GameMap.js';
 import { GameState } from './GameState.js';
 
 export class GameEngine {
@@ -14,7 +13,6 @@ export class GameEngine {
     private deltaTime: number;
 
     constructor(
-        map: GameMap,
         waveManager: WaveManager,
         enemyManager: EnemyManager,
         towerManager: TowerManager
@@ -25,7 +23,6 @@ export class GameEngine {
         this.currentState = {
             gameTime: 0,
             waveNumber: 0,
-            map: map,
             enemies: [],
             towers: [],
             money: GAME_CONFIG.initialMoney,
@@ -78,7 +75,6 @@ export class GameEngine {
         this.currentState = {
             gameTime: 0,
             waveNumber: 0,
-            map: this.currentState.map,
             enemies: [],
             towers: [],
             money: GAME_CONFIG.initialMoney,

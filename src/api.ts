@@ -37,7 +37,7 @@ const map = new GameMap();
 const enemyManager = new EnemyManager(map);
 const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
-const engine = new GameEngine(map, waveManager, enemyManager, towerManager);
+const engine = new GameEngine(waveManager, enemyManager, towerManager);
 
 app.get('/', (req, res) => {
     res.send('Tower Defense Game API');
