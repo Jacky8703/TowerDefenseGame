@@ -5,6 +5,7 @@ import { GameEngine } from './core/GameEngine.js';
 import { TowerManager } from './managers/TowerManager.js';
 import { EnemyManager } from './managers/EnemyManager.js';
 import { WaveManager } from './managers/WaveManager.js';
+import { GAME_CONFIG } from './core/GameConfig.js';
 
 const map = new GameMap();
 const enemyManager = new EnemyManager(map);

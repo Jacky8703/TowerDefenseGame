@@ -2,7 +2,7 @@ import { Direction, GAME_CONFIG, Position } from './GameConfig.js';
 
 interface Waypoint {
     position: Position;
-    readonly nextDirection: Direction;
+    readonly nextDirection: Direction; // direction to the next waypoint
     readonly distanceFromStart: number; // pixels
 }
 

@@ -7,8 +7,8 @@ export enum EnemyType {
 
 export enum TowerType {
     ARCHER = 'archer',
-    SNIPER = 'sniper',
     CANNON = 'cannon',
+    SNIPER = 'sniper',
 }
 
 export type Action =
@@ -31,6 +31,7 @@ export interface Enemy {
     currentHealth: number;
     currentSpeed: number;
     position: Position;
+    direction: Direction;
     currentWaypointIndex: number; // current index of the waypoint to reach
     pathProgress: number; // progress along the path, from 0 to 1
 }

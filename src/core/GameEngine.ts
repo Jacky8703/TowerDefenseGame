@@ -23,10 +23,10 @@ export class GameEngine {
         this.currentState = {
             gameTime: 0,
             waveNumber: 0,
-            enemies: [],
-            towers: [],
             money: GAME_CONFIG.initialMoney,
             gameOver: false,
+            enemies: [],
+            towers: [],
         };
         this.lastUpdateTime = Date.now();
         this.deltaTime = 0;

@@ -9,6 +9,7 @@ import { GameMap } from './core/GameMap.js';
 import { GameState } from './core/GameState.js';
 
 interface InfoPanel {
+    timeDisplay: HTMLElement;
     moneyDisplay: HTMLElement;
     waveDisplay: HTMLElement;
     towerButtons: HTMLButtonElement[];
@@ -31,6 +32,7 @@ export class Renderer {
         ) as HTMLCanvasElement;
         this.ctx = this.canvas.getContext('2d')!;
         this.infoPanel = {
+            timeDisplay: document.getElementById('time-display')!,
             moneyDisplay: document.getElementById('money-display')!,
             waveDisplay: document.getElementById('wave-display')!,
             towerButtons: [],
@@ -64,6 +66,7 @@ export class Renderer {
         this.drawEnemies(gameState.enemies);
         this.drawTowers(gameState.towers, this.map.cellSize / 1.5);
         this.updateInfoPanel(
+            gameState.gameTime,
             gameState.money,
             gameState.waveNumber,
             gameState.gameOver
@@ -100,6 +103,7 @@ export class Renderer {
     }
 
     private updateInfoPanel(
+        gameTime: number,
         money: number,
         waveNumber: number,
         gameOver: boolean
@@ -109,6 +113,7 @@ export class Renderer {
             this.infoPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
             return;
         }
+        this.infoPanel.timeDisplay.textContent = `Time: ${Math.floor(gameTime)}s`;
         this.infoPanel.moneyDisplay.textContent = `Money: $${money}`;
         this.infoPanel.waveDisplay.textContent = `Wave: ${waveNumber}`;
         this.infoPanel.towerButtons.forEach((button) => {

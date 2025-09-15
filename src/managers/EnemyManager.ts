@@ -42,6 +42,7 @@ export class EnemyManager {
             currentHealth: GAME_CONFIG.enemies[type].health * healthMultiplier,
             currentSpeed: GAME_CONFIG.enemies[type].speed * speedMultiplier,
             position: startPosition,
+            direction: this.map.path.waypoints[0].nextDirection,
             currentWaypointIndex: 1,
             pathProgress: 0,
         });
@@ -49,29 +50,29 @@ export class EnemyManager {
 
     private move(enemy: Enemy, deltaTime: number) {
         const movement = enemy.currentSpeed * deltaTime;
-        const direction =
-            this.map.path.waypoints[enemy.currentWaypointIndex - 1]
-                .nextDirection;
-        enemy.position.x += movement * direction.dx;
-        enemy.position.y += movement * direction.dy;
+        enemy.position.x += movement * enemy.direction.dx;
+        enemy.position.y += movement * enemy.direction.dy;
 
         let waypointReached = false;
         const targetWaypoint =
             this.map.path.waypoints[enemy.currentWaypointIndex];
-        if (direction.dx > 0 && enemy.position.x >= targetWaypoint.position.x) {
+        if (
+            enemy.direction.dx > 0 &&
+            enemy.position.x >= targetWaypoint.position.x
+        ) {
             waypointReached = true; // >
         } else if (
-            direction.dx < 0 &&
+            enemy.direction.dx < 0 &&
             enemy.position.x <= targetWaypoint.position.x
         ) {
             waypointReached = true; // <
         } else if (
-            direction.dy > 0 &&
+            enemy.direction.dy > 0 &&
             enemy.position.y >= targetWaypoint.position.y
         ) {
             waypointReached = true; // v
         } else if (
-            direction.dy < 0 &&
+            enemy.direction.dy < 0 &&
             enemy.position.y <= targetWaypoint.position.y
         ) {
             waypointReached = true; // ^
@@ -80,6 +81,10 @@ export class EnemyManager {
             enemy.position.x = targetWaypoint.position.x;
             enemy.position.y = targetWaypoint.position.y;
             enemy.currentWaypointIndex += 1;
+            enemy.direction =
+                this.map.path.waypoints[
+                    enemy.currentWaypointIndex - 1
+                ].nextDirection;
         }
 
         enemy.pathProgress =
