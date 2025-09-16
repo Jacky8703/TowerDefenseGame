@@ -11,7 +11,7 @@ const map = new GameMap();
 const enemyManager = new EnemyManager(map);
 const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
-const engine = new GameEngine(waveManager, enemyManager, towerManager);
+const engine = new GameEngine(waveManager, enemyManager, towerManager, false);
 let state: GameState = engine.getState();
 
 const renderer = new Renderer(map);

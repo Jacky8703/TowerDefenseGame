@@ -5,6 +5,7 @@ import { Action, GAME_CONFIG } from './GameConfig.js';
 import { GameState } from './GameState.js';
 
 export class GameEngine {
+    private readonly trainingModel: boolean;
     private readonly waveManager: WaveManager;
     private readonly enemyManager: EnemyManager;
     private readonly towerManager: TowerManager;
@@ -15,8 +16,10 @@ export class GameEngine {
     constructor(
         waveManager: WaveManager,
         enemyManager: EnemyManager,
-        towerManager: TowerManager
+        towerManager: TowerManager,
+        trainingModel: boolean
     ) {
+        this.trainingModel = trainingModel;
         this.waveManager = waveManager;
         this.enemyManager = enemyManager;
         this.towerManager = towerManager;
@@ -29,11 +32,17 @@ export class GameEngine {
             towers: [],
         };
         this.lastUpdateTime = Date.now();
-        this.deltaTime = 0;
+        this.trainingModel
+            ? (this.deltaTime = GAME_CONFIG.FIXED_DELTA_TIME)
+            : (this.deltaTime = 0);
     }
 
     step(action: Action) {
-        this.deltaTime = (Date.now() - this.lastUpdateTime) / 1000.0; // in seconds
+        if (!this.trainingModel) {
+            const now = Date.now();
+            this.deltaTime = (now - this.lastUpdateTime) / 1000.0; // in seconds
+            this.lastUpdateTime = now;
+        }
         // handle action
         if (
             action.type === 'BUILD_TOWER' &&
@@ -63,8 +72,6 @@ export class GameEngine {
         this.currentState.waveNumber = this.waveManager.getWaveNumber();
         this.currentState.gameTime += this.deltaTime;
         this.currentState.gameOver = this.checkGameOver();
-
-        this.lastUpdateTime += this.deltaTime * 1000;
     }
 
     getState(): GameState {
@@ -81,7 +88,9 @@ export class GameEngine {
             gameOver: false,
         };
         this.lastUpdateTime = Date.now();
-        this.deltaTime = 0;
+        this.trainingModel
+            ? (this.deltaTime = GAME_CONFIG.FIXED_DELTA_TIME)
+            : (this.deltaTime = 0);
         this.waveManager.reset();
     }
 

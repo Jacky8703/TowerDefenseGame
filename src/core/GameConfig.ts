@@ -100,8 +100,9 @@ export const GAME_CONFIG = {
             { basic: 0, fast: 7, tank: 7 },
             { basic: 0, fast: 6, tank: 9 }, // the last wave will be repeated with increasing difficulty
         ],
-        healthGrowthFactor: 1.2, // enemy health multiplier every wave after the predefined ones
+        healthGrowthFactor: 1.2, // enemy health multiplier every wave after the predefined ones, quite high, probably should be lower
         speedGrowthFactor: 1.1, // enemy speed multiplier every wave after the predefined ones
+        speedLimit: 250,
     },
     towers: {
         [TowerType.ARCHER]: {
@@ -129,4 +130,5 @@ export const GAME_CONFIG = {
             color: 'indianred',
         },
     },
+    FIXED_DELTA_TIME: 0.1, // one step counts as 0.1 seconds
 } as const;

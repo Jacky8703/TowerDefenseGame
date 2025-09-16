@@ -40,7 +40,10 @@ export class EnemyManager {
             type: type,
             fullHealth: GAME_CONFIG.enemies[type].health * healthMultiplier,
             currentHealth: GAME_CONFIG.enemies[type].health * healthMultiplier,
-            currentSpeed: GAME_CONFIG.enemies[type].speed * speedMultiplier,
+            currentSpeed: Math.min(
+                GAME_CONFIG.enemies[type].speed * speedMultiplier,
+                GAME_CONFIG.waves.speedLimit
+            ),
             position: startPosition,
             direction: this.map.path.waypoints[0].nextDirection,
             currentWaypointIndex: 1,

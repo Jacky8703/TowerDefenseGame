@@ -15,7 +15,7 @@ import {
 } from './core/GameConfig.js';
 
 interface GameInfo {
-    global_info: {
+    max_global_info: {
         game_time: number;
         wave_number: number;
         money: number;
@@ -23,8 +23,11 @@ interface GameInfo {
     };
     actions: Action[];
     map: {
+        width: number;
+        height: number;
+        cell_size: number;
         path_length: number;
-        buildable_cells: Position[];
+        path_cells: Position[];
     };
     towers: {
         type: TowerType;
@@ -35,7 +38,7 @@ interface GameInfo {
     waves: {
         wave_delay: number;
         spawn_delay: number;
-        avg_enemies: number;
+        max_enemies: number;
         enemy_types: EnemyType[];
         slower_enemy_sample: Enemy; // pick the slower enemy type for future calculations of max number of enemies on map
     };
@@ -71,7 +74,7 @@ const map = new GameMap();
 const enemyManager = new EnemyManager(map);
 const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
-const engine = new GameEngine(waveManager, enemyManager, towerManager);
+const engine = new GameEngine(waveManager, enemyManager, towerManager, true); // set to true to train the model
 
 app.get('/', (req, res) => {
     res.send('Tower Defense Game API');
@@ -134,23 +137,26 @@ function getGameInfo(): GameInfo {
         }
     }
     return {
-        global_info: {
-            game_time: 0,
-            wave_number: 0,
-            money: GAME_CONFIG.initialMoney,
+        max_global_info: {
+            game_time: 1300, // enough time to reach wave 50
+            wave_number: 50, // not even possible with current config, the health of enemies will be too high (multiplied by more than 1400 at wave 50)
+            money: 999,
             game_over: false,
         },
         actions: [
+            { type: 'NONE' },
             {
                 type: 'BUILD_TOWER',
                 towerType: TowerType.ARCHER,
                 position: { x: 0, y: 0 },
             },
-            { type: 'NONE' },
         ],
         map: {
+            width: map.width,
+            height: map.height,
+            cell_size: map.cellSize,
             path_length: map.path.length,
-            buildable_cells: map.buildableCells,
+            path_cells: map.path.allCells,
         },
         towers: towers,
         tower_sample: {
@@ -161,11 +167,9 @@ function getGameInfo(): GameInfo {
         waves: {
             wave_delay: GAME_CONFIG.waves.waveDelay,
             spawn_delay: GAME_CONFIG.waves.spawnDelay,
-            avg_enemies:
-                GAME_CONFIG.waves.list
-                    .map((w) => w.basic + w.fast + w.tank)
-                    .reduce((sum, current) => sum + current, 0) /
-                GAME_CONFIG.waves.list.length,
+            max_enemies: Math.max(
+                ...GAME_CONFIG.waves.list.map((w) => w.basic + w.fast + w.tank)
+            ),
             enemy_types: enemyTypes,
             slower_enemy_sample: {
                 type: slowerType,
