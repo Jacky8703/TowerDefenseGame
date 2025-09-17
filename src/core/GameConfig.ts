@@ -39,7 +39,7 @@ export interface Enemy {
 export interface Tower {
     readonly type: TowerType;
     readonly position: Position;
-    fireRate: number;
+    attackCooldown: number;
 }
 
 export const GAME_CONFIG = {
@@ -108,7 +108,7 @@ export const GAME_CONFIG = {
         [TowerType.ARCHER]: {
             range: 125, // in pixels
             damage: 10,
-            attackSpeed: 1, // time between attacks in seconds
+            attackCooldown: 1, // time between attacks in seconds
             cost: 20, // cost in game currency
             unlockWave: 0, // unlocked from the start
             color: 'lightgreen',
@@ -116,7 +116,7 @@ export const GAME_CONFIG = {
         [TowerType.CANNON]: {
             range: 75,
             damage: 75,
-            attackSpeed: 2,
+            attackCooldown: 2,
             cost: 35,
             unlockWave: 4,
             color: 'white',
@@ -124,7 +124,7 @@ export const GAME_CONFIG = {
         [TowerType.SNIPER]: {
             range: 175,
             damage: 75,
-            attackSpeed: 3,
+            attackCooldown: 3,
             cost: 50,
             unlockWave: 7,
             color: 'indianred',

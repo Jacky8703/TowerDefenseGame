@@ -16,7 +16,7 @@ export class TowerManager {
 
     update(deltaTime: number, towers: Tower[], enemies: Enemy[]) {
         towers.forEach((t) => {
-            t.fireRate = Math.max(0, t.fireRate - deltaTime);
+            t.attackCooldown = Math.max(0, t.attackCooldown - deltaTime);
         });
         this.findAndAttackEnemyInRange(towers, enemies);
     }
@@ -50,7 +50,7 @@ export class TowerManager {
         towers.push({
             type: type,
             position: position,
-            fireRate: GAME_CONFIG.towers[type].attackSpeed,
+            attackCooldown: GAME_CONFIG.towers[type].attackCooldown,
         });
         return money - GAME_CONFIG.towers[type].cost;
     }
@@ -58,7 +58,7 @@ export class TowerManager {
     // for each tower, check if it can fire, if yes check which enemies are in range and attack only the one with the highest progress along the path (the closest to the end)
     private findAndAttackEnemyInRange(towers: Tower[], enemies: Enemy[]) {
         towers.forEach((t) => {
-            if (t.fireRate <= 0) {
+            if (t.attackCooldown <= 0) {
                 const enemiesInRange = enemies.filter(
                     (e) =>
                         this.map.calculateDistanceBetweenPoints(
@@ -75,7 +75,7 @@ export class TowerManager {
                     }
                 }
                 target.currentHealth -= GAME_CONFIG.towers[t.type].damage;
-                t.fireRate = GAME_CONFIG.towers[t.type].attackSpeed; // reset fire rate
+                t.attackCooldown = GAME_CONFIG.towers[t.type].attackCooldown; // reset attack cooldown
             }
         });
     }
