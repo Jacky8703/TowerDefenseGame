@@ -1,12 +1,14 @@
+import { ca } from 'zod/locales';
 import {
     Action,
     Enemy,
     GAME_CONFIG,
     Tower,
     TowerType,
-} from './core/GameConfig.js';
-import { GameMap } from './core/GameMap.js';
-import { GameState } from './core/GameState.js';
+} from '../core/GameConfig.js';
+import { GameMap } from '../core/GameMap.js';
+import { GameState } from '../core/GameState.js';
+import { BaseRenderer } from './BaseRenderer.js';
 
 interface InfoPanel {
     timeDisplay: HTMLElement;
@@ -17,20 +19,18 @@ interface InfoPanel {
     finalWaveNumber: HTMLElement;
 }
 
-export class Renderer {
-    private map: GameMap;
+export class BrowserRenderer extends BaseRenderer {
     private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
     private infoPanel: InfoPanel;
     private selectedTowerType: TowerType | null;
     action: Action;
 
     constructor(map: GameMap) {
-        this.map = map;
-        this.canvas = document.getElementById(
+        const canvas = document.getElementById(
             'gameCanvas'
         ) as HTMLCanvasElement;
-        this.ctx = this.canvas.getContext('2d')!;
+        super(map, canvas.getContext('2d')!);
+        this.canvas = canvas;
         this.infoPanel = {
             timeDisplay: document.getElementById('time-display')!,
             moneyDisplay: document.getElementById('money-display')!,
@@ -41,7 +41,6 @@ export class Renderer {
         };
         this.selectedTowerType = null;
         this.action = { type: 'NONE' };
-
         this.canvas.width = GAME_CONFIG.map.width;
         this.canvas.height = GAME_CONFIG.map.height;
 
@@ -122,96 +121,6 @@ export class Renderer {
                 waveNumber <
                     GAME_CONFIG.towers[button.id as TowerType].unlockWave;
             button.textContent = `${button.id} - $${GAME_CONFIG.towers[button.id as TowerType].cost}`; // show tower cost
-        });
-    }
-
-    private drawPath() {
-        this.ctx.fillStyle = 'saddlebrown';
-        this.map.path.allCells.forEach((cell) => {
-            this.ctx.fillRect(
-                cell.x - this.map.cellSize / 2,
-                cell.y - this.map.cellSize / 2,
-                this.map.cellSize,
-                this.map.cellSize
-            ); // top-left corner coordinates
-        });
-    }
-
-    private drawMap() {
-        this.ctx.fillStyle = 'forestgreen';
-        this.map.buildableCells.forEach((cell) => {
-            this.ctx.fillRect(
-                cell.x - this.map.cellSize / 2,
-                cell.y - this.map.cellSize / 2,
-                this.map.cellSize,
-                this.map.cellSize
-            ); // top-left corner coordinates
-            this.ctx.strokeStyle = 'black';
-            this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(
-                cell.x - this.map.cellSize / 2,
-                cell.y - this.map.cellSize / 2,
-                this.map.cellSize,
-                this.map.cellSize
-            );
-        });
-    }
-
-    private drawEnemies(enemies: Enemy[]) {
-        const radius = 10;
-        const barWidth = 20;
-        const barHeight = 4;
-
-        enemies.forEach((enemy) => {
-            // 1. Draw the enemy's body (a simple circle)
-            this.ctx.beginPath();
-            this.ctx.fillStyle = GAME_CONFIG.enemies[enemy.type].color;
-            this.ctx.arc(
-                enemy.position.x,
-                enemy.position.y,
-                radius,
-                0,
-                2 * Math.PI
-            );
-            this.ctx.fill();
-
-            // 2. Calculate health percentage
-            const healthPercent = enemy.currentHealth / enemy.fullHealth;
-
-            // 3. Calculate health bar position (above the enemy)
-            const barX = enemy.position.x - barWidth / 2;
-            const barY = enemy.position.y - radius - barHeight - 2; // 2px padding
-
-            // 4. Draw the health bar background (the "empty" part)
-            this.ctx.fillStyle = 'red';
-            this.ctx.fillRect(barX, barY, barWidth, barHeight);
-
-            // 5. Draw the health bar foreground (the actual health)
-            this.ctx.fillStyle = 'green';
-            this.ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
-        });
-    }
-
-    private drawTowers(towers: Tower[], size: number) {
-        towers.forEach((tower) => {
-            this.ctx.fillStyle = GAME_CONFIG.towers[tower.type].color;
-            this.ctx.fillRect(
-                tower.position.x - size / 2,
-                tower.position.y - size / 2,
-                size,
-                size
-            ); // top-left corner coordinates
-            this.ctx.beginPath();
-            this.ctx.arc(
-                tower.position.x,
-                tower.position.y,
-                GAME_CONFIG.towers[tower.type].range,
-                0,
-                2 * Math.PI
-            );
-            this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
-            this.ctx.lineWidth = 2;
-            this.ctx.stroke();
         });
     }
 }

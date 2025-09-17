@@ -29,6 +29,7 @@
     "printWidth": 80
   },
   "dependencies": {
+    "canvas": "^3.2.0",
     "express": "^5.1.0",
     "ts-node": "^10.9.2",
     "zod": "^4.1.8"

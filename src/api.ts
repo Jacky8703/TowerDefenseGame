@@ -13,13 +13,14 @@ import {
     Tower,
     TowerType,
 } from './core/GameConfig.js';
+import { ServerRenderer } from './render/ServerRenderer.js';
 
 interface GameInfo {
     max_global_info: {
-        game_time: number;
-        wave_number: number;
+        gameTime: number;
+        waveNumber: number;
         money: number;
-        game_over: boolean;
+        gameOver: boolean;
     };
     actions: Action[];
     map: {
@@ -31,10 +32,11 @@ interface GameInfo {
     };
     towers: {
         type: TowerType;
+        range: number;
         cost: number;
         unlock_wave: number;
     }[];
-    tower_sample: Tower;
+    slower_tower_sample: Tower; // pick the slower tower type for future normalization
     waves: {
         wave_delay: number;
         spawn_delay: number;
@@ -76,6 +78,8 @@ const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
 const engine = new GameEngine(waveManager, enemyManager, towerManager, true); // set to true to train the model
 
+const renderer = new ServerRenderer(map);
+
 app.get('/', (req, res) => {
     res.send('Tower Defense Game API');
 });
@@ -110,6 +114,13 @@ app.post('/step', (req, res) => {
     }
 });
 
+app.get('/render', (req, res) => {
+    const gameState = engine.getState();
+    const imageBuffer = renderer.renderToBuffer(gameState);
+    res.set('Content-Type', 'image/png');
+    res.send(imageBuffer);
+});
+
 app.listen(port, () => {
     console.log(
         `Tower Defense API server listening on http://localhost:${port}`
@@ -118,30 +129,38 @@ app.listen(port, () => {
 
 function getGameInfo(): GameInfo {
     let towers = [];
+    let slowerTowerType: TowerType = TowerType.ARCHER;
     for (const type of Object.values(TowerType)) {
         towers.push({
             type,
+            range: GAME_CONFIG.towers[type].range,
             cost: GAME_CONFIG.towers[type].cost,
             unlock_wave: GAME_CONFIG.towers[type].unlockWave,
         });
+        if (
+            GAME_CONFIG.towers[type].attackCooldown >
+            GAME_CONFIG.towers[slowerTowerType].attackCooldown
+        ) {
+            slowerTowerType = type;
+        }
     }
     let enemyTypes = [];
-    let slowerType: EnemyType = EnemyType.BASIC;
+    let slowerEnemyType: EnemyType = EnemyType.BASIC;
     for (const type of Object.values(EnemyType)) {
         enemyTypes.push(type);
         if (
             GAME_CONFIG.enemies[type].speed <
-            GAME_CONFIG.enemies[slowerType].speed
+            GAME_CONFIG.enemies[slowerEnemyType].speed
         ) {
-            slowerType = type;
+            slowerEnemyType = type;
         }
     }
     return {
         max_global_info: {
-            game_time: 1300, // enough time to reach wave 50
-            wave_number: 50, // not even possible with current config, the health of enemies will be too high (multiplied by more than 1400 at wave 50)
+            gameTime: 1300, // enough time to reach wave 50
+            waveNumber: 50, // not even possible with current config, the health of enemies will be too high (multiplied by more than 1400 at wave 50)
             money: 999,
-            game_over: false,
+            gameOver: false,
         },
         actions: [
             { type: 'NONE' },
@@ -159,10 +178,10 @@ function getGameInfo(): GameInfo {
             path_cells: map.path.allCells,
         },
         towers: towers,
-        tower_sample: {
-            type: TowerType.ARCHER,
+        slower_tower_sample: {
+            type: slowerTowerType,
             position: { x: 0, y: 0 },
-            fireRate: GAME_CONFIG.towers[TowerType.ARCHER].attackSpeed,
+            attackCooldown: GAME_CONFIG.towers[slowerTowerType].attackCooldown,
         },
         waves: {
             wave_delay: GAME_CONFIG.waves.waveDelay,
@@ -172,10 +191,10 @@ function getGameInfo(): GameInfo {
             ),
             enemy_types: enemyTypes,
             slower_enemy_sample: {
-                type: slowerType,
-                fullHealth: GAME_CONFIG.enemies[slowerType].health,
-                currentHealth: GAME_CONFIG.enemies[slowerType].health,
-                currentSpeed: GAME_CONFIG.enemies[slowerType].speed,
+                type: slowerEnemyType,
+                fullHealth: GAME_CONFIG.enemies[slowerEnemyType].health,
+                currentHealth: GAME_CONFIG.enemies[slowerEnemyType].health,
+                currentSpeed: GAME_CONFIG.enemies[slowerEnemyType].speed,
                 position: { x: 0, y: 0 },
                 direction: { dx: 0, dy: 0 },
                 currentWaypointIndex: 1,
