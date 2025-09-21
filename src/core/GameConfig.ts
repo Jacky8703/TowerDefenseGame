@@ -85,7 +85,7 @@ export const GAME_CONFIG = {
         },
     },
     waves: {
-        waveDelay: 12, // time between waves in seconds
+        waveDelay: 10, // time between waves in seconds
         spawnDelay: 1, // time between spawns in seconds
         list: [
             // first 10 waves
