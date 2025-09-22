@@ -1,19 +1,9 @@
-import { ca } from 'zod/locales';
-import {
-    Action,
-    Enemy,
-    GAME_CONFIG,
-    Tower,
-    TowerType,
-} from '../core/GameConfig.js';
+import { Action, GAME_CONFIG, TowerType } from '../core/GameConfig.js';
 import { GameMap } from '../core/GameMap.js';
 import { GameState } from '../core/GameState.js';
-import { BaseRenderer } from './BaseRenderer.js';
+import { BaseRenderer, INFO_PANEL_HEIGHT } from './BaseRenderer.js';
 
-interface InfoPanel {
-    timeDisplay: HTMLElement;
-    moneyDisplay: HTMLElement;
-    waveDisplay: HTMLElement;
+interface BrowserPanel {
     towerButtons: HTMLButtonElement[];
     gameOverScreen: HTMLElement;
     finalWaveNumber: HTMLElement;
@@ -21,7 +11,7 @@ interface InfoPanel {
 
 export class BrowserRenderer extends BaseRenderer {
     private canvas: HTMLCanvasElement;
-    private infoPanel: InfoPanel;
+    private browserPanel: BrowserPanel;
     private selectedTowerType: TowerType | null;
     action: Action;
 
@@ -29,20 +19,18 @@ export class BrowserRenderer extends BaseRenderer {
         const canvas = document.getElementById(
             'gameCanvas'
         ) as HTMLCanvasElement;
-        super(map, canvas.getContext('2d')!);
+        super(map);
+        this.ctx = canvas.getContext('2d')!;
         this.canvas = canvas;
-        this.infoPanel = {
-            timeDisplay: document.getElementById('time-display')!,
-            moneyDisplay: document.getElementById('money-display')!,
-            waveDisplay: document.getElementById('wave-display')!,
+        this.browserPanel = {
             towerButtons: [],
             gameOverScreen: document.getElementById('game-over-screen')!,
             finalWaveNumber: document.getElementById('final-wave-number')!,
         };
         this.selectedTowerType = null;
         this.action = { type: 'NONE' };
-        this.canvas.width = GAME_CONFIG.map.width;
-        this.canvas.height = GAME_CONFIG.map.height;
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
 
         for (const type of Object.values(TowerType)) {
             const button = document.getElementById(
@@ -53,19 +41,15 @@ export class BrowserRenderer extends BaseRenderer {
             button.addEventListener('click', () => {
                 this.selectedTowerType = type as TowerType;
             });
-            this.infoPanel.towerButtons.push(button);
+            this.browserPanel.towerButtons.push(button);
         }
 
         this.manageInput();
     }
 
-    render(gameState: GameState) {
-        this.drawPath();
-        this.drawMap();
-        this.drawEnemies(gameState.enemies);
-        this.drawTowers(gameState.towers, this.map.cellSize / 1.5);
-        this.updateInfoPanel(
-            gameState.gameTime,
+    renderToBrowser(gameState: GameState) {
+        this.render(gameState);
+        this.updateBrowserPanel(
             gameState.money,
             gameState.waveNumber,
             gameState.gameOver
@@ -76,9 +60,9 @@ export class BrowserRenderer extends BaseRenderer {
         const rect = this.canvas.getBoundingClientRect();
         this.canvas.addEventListener('click', (event) => {
             if (this.selectedTowerType !== null) {
-                // get click position relative to canvas
+                // get click position relative to canvas (it has the panel height top offset)
                 const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
+                const y = event.clientY - rect.top - INFO_PANEL_HEIGHT; // account for the offset
 
                 const gridCellIndexX = Math.floor(x / this.map.cellSize);
                 const gridCellIndexY = Math.floor(y / this.map.cellSize);
@@ -101,21 +85,18 @@ export class BrowserRenderer extends BaseRenderer {
         });
     }
 
-    private updateInfoPanel(
-        gameTime: number,
+    private updateBrowserPanel(
         money: number,
         waveNumber: number,
         gameOver: boolean
     ) {
         if (gameOver) {
-            this.infoPanel.finalWaveNumber.textContent = waveNumber.toString();
-            this.infoPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
+            this.browserPanel.finalWaveNumber.textContent =
+                waveNumber.toString();
+            this.browserPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
             return;
         }
-        this.infoPanel.timeDisplay.textContent = `Time: ${Math.floor(gameTime)}s`;
-        this.infoPanel.moneyDisplay.textContent = `Money: $${money}`;
-        this.infoPanel.waveDisplay.textContent = `Wave: ${waveNumber}`;
-        this.infoPanel.towerButtons.forEach((button) => {
+        this.browserPanel.towerButtons.forEach((button) => {
             button.disabled =
                 money < GAME_CONFIG.towers[button.id as TowerType].cost ||
                 waveNumber <

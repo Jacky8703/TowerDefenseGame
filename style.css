@@ -26,45 +26,20 @@ h1 {
     letter-spacing: 2px;
 }
 
-#game-wrapper {
-    display: grid;
-    grid-template-areas:
-        'status towers'
-        'canvas towers';
-    grid-template-columns: auto 150px; /* Canvas width + panel width */
-    gap: 1rem;
-    padding: 1rem;
-    background-color: var(--panel-bg);
-    border-radius: 8px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
 #gameCanvas {
-    grid-area: canvas;
     border: 1px solid var(--border-color);
-    background-color: #fdfdfd;
-}
-
-#status-panel {
-    grid-area: status;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0.5rem;
-    background-color: #1a202c;
+    background-color: darkgreen; /* A more traditional TD background */
     border-radius: 4px;
-    font-size: 1.2rem;
 }
 
 #towers-panel {
-    grid-area: towers;
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Arrange buttons horizontally */
     gap: 0.75rem;
 }
 
 .tower-button {
-    padding: 1rem 0.5rem;
+    padding: 0.75rem 1.5rem; /* Adjusted for a horizontal layout */
     font-size: 1rem;
     font-weight: bold;
     color: #ffffff;

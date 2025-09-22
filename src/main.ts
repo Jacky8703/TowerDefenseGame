@@ -14,12 +14,12 @@ const engine = new GameEngine(waveManager, enemyManager, towerManager, false);
 let state: GameState = engine.getState();
 
 const renderer = new BrowserRenderer(map);
-renderer.render(state);
+renderer.renderToBrowser(state);
 
 function gameloop() {
     engine.step(renderer.action);
     state = engine.getState();
-    renderer.render(state);
+    renderer.renderToBrowser(state);
     if (state.gameOver) {
         console.log('Game Over!');
         return;
