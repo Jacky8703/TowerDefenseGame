@@ -102,16 +102,19 @@ app.post('/step', (req, res) => {
         res.json(engine.getState());
     } catch (err) {
         if (err instanceof z.ZodError) {
+            console.error('Invalid action format:', err);
             return res.status(400).json({
                 message: 'Invalid action format',
                 errors: z.treeifyError(err),
             });
         } else if (err instanceof Error) {
             // handle other errors thrown in the game logic
+            console.error('Game Logic Error:', err.message);
             return res.status(400).json({ message: err.message });
         }
         // handle unexpected errors
-        return res.status(500).json({ message: 'Internal server error' });
+        console.error('Unexpected Internal Server Error:', err);
+        return res.status(500).json({ message: 'Internal server error:' });
     }
 });
 
