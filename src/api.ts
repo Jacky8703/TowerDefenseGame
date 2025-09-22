@@ -135,7 +135,9 @@ function getGameInfo(): GameInfo {
         towers.push({
             type,
             range: GAME_CONFIG.towers[type].range,
-            dps: GAME_CONFIG.towers[type].damage / GAME_CONFIG.towers[type].attackCooldown,
+            dps:
+                GAME_CONFIG.towers[type].damage /
+                GAME_CONFIG.towers[type].attackCooldown,
             cost: GAME_CONFIG.towers[type].cost,
             unlock_wave: GAME_CONFIG.towers[type].unlockWave,
         });
