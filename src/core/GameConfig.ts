@@ -67,13 +67,13 @@ export const GAME_CONFIG = {
     enemies: {
         [EnemyType.BASIC]: {
             health: 40,
-            speed: 60, // px per second
+            speed: 50, // px per second
             reward: 2, // money for killing
             color: 'darkgray',
         },
         [EnemyType.FAST]: {
             health: 30,
-            speed: 90,
+            speed: 80,
             reward: 2,
             color: 'greenyellow',
         },
@@ -86,18 +86,18 @@ export const GAME_CONFIG = {
     },
     waves: {
         waveDelay: 10, // time between waves in seconds
-        spawnDelay: 1, // time between spawns in seconds
+        spawnDelay: 1.5, // time between spawns in seconds
         list: [
             // first 10 waves
             { basic: 2, fast: 0, tank: 0 },
-            { basic: 5, fast: 0, tank: 0 },
-            { basic: 5, fast: 2, tank: 0 },
-            { basic: 5, fast: 3, tank: 1 },
-            { basic: 2, fast: 4, tank: 2 },
-            { basic: 2, fast: 6, tank: 3 },
-            { basic: 2, fast: 8, tank: 3 },
+            { basic: 4, fast: 0, tank: 0 },
+            { basic: 4, fast: 2, tank: 0 },
+            { basic: 5, fast: 2, tank: 1 },
+            { basic: 2, fast: 3, tank: 2 },
+            { basic: 2, fast: 6, tank: 2 },
+            { basic: 2, fast: 6, tank: 4 },
             { basic: 0, fast: 6, tank: 6 },
-            { basic: 0, fast: 7, tank: 7 },
+            { basic: 0, fast: 9, tank: 5 },
             { basic: 0, fast: 6, tank: 9 }, // the last wave will be repeated with increasing difficulty
         ],
         healthGrowthFactor: 1.2, // enemy health multiplier every wave after the predefined ones, quite high, probably should be lower
