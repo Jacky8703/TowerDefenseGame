@@ -43,7 +43,7 @@ export interface Tower {
 }
 
 export const GAME_CONFIG = {
-    initialMoney: 40,
+    startingMoney: 40,
     map: {
         width: 900,
         height: 600,
@@ -74,13 +74,13 @@ export const GAME_CONFIG = {
         [EnemyType.FAST]: {
             health: 30,
             speed: 70,
-            reward: 2.5,
+            reward: 2,
             color: 'greenyellow',
         },
         [EnemyType.TANK]: {
             health: 150,
             speed: 40,
-            reward: 3,
+            reward: 2,
             color: 'black',
         },
     },

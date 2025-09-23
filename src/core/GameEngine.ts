@@ -26,7 +26,7 @@ export class GameEngine {
         this.currentState = {
             gameTime: 0,
             waveNumber: 0,
-            money: GAME_CONFIG.initialMoney,
+            money: GAME_CONFIG.startingMoney,
             gameOver: false,
             enemies: [],
             towers: [],
@@ -84,7 +84,7 @@ export class GameEngine {
             waveNumber: 0,
             enemies: [],
             towers: [],
-            money: GAME_CONFIG.initialMoney,
+            money: GAME_CONFIG.startingMoney,
             gameOver: false,
         };
         this.lastUpdateTime = Date.now();
