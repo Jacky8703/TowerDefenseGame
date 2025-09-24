@@ -25,8 +25,8 @@ export class WaveManager {
         this.waveState = WaveState.WAITING;
         this.currentWaveNumber = 0;
         this.currentEnemyCount = {} as Record<EnemyType, number>;
-        this.waveDelay = GAME_CONFIG.waves.waveDelay;
-        this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
+        this.waveDelay = 0;
+        this.spawnDelay = 0;
         this.multipliers = {
             enemyHealth: 1,
             enemySpeed: 1,
@@ -77,8 +77,8 @@ export class WaveManager {
         for (const type of Object.values(EnemyType)) {
             this.currentEnemyCount[type] = 0;
         }
-        this.waveDelay = GAME_CONFIG.waves.waveDelay;
-        this.spawnDelay = GAME_CONFIG.waves.spawnDelay;
+        this.waveDelay = 0;
+        this.spawnDelay = 0;
         this.multipliers = {
             enemyHealth: 1,
             enemySpeed: 1,
