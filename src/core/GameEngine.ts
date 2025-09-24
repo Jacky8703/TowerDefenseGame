@@ -27,6 +27,7 @@ export class GameEngine {
             gameTime: 0,
             waveNumber: 0,
             money: GAME_CONFIG.startingMoney,
+            lives: GAME_CONFIG.startingLives,
             gameOver: false,
             enemies: [],
             towers: [],
@@ -58,10 +59,9 @@ export class GameEngine {
         }
         // update all managers
         this.waveManager.update(this.deltaTime, this.currentState.enemies);
-        this.currentState.money = this.enemyManager.update(
+        const {reward, livesLost} = this.enemyManager.update(
             this.deltaTime,
-            this.currentState.enemies,
-            this.currentState.money
+            this.currentState.enemies
         );
         this.towerManager.update(
             this.deltaTime,
@@ -69,8 +69,10 @@ export class GameEngine {
             this.currentState.enemies
         );
         // update game state
-        this.currentState.waveNumber = this.waveManager.getWaveNumber();
         this.currentState.gameTime += this.deltaTime;
+        this.currentState.waveNumber = this.waveManager.getWaveNumber();
+        this.currentState.money += reward;
+        this.currentState.lives -= livesLost;
         this.currentState.gameOver = this.checkGameOver();
     }
 
@@ -82,10 +84,11 @@ export class GameEngine {
         this.currentState = {
             gameTime: 0,
             waveNumber: 0,
+            money: GAME_CONFIG.startingMoney,
+            lives: GAME_CONFIG.startingLives,
+            gameOver: false,
             enemies: [],
             towers: [],
-            money: GAME_CONFIG.startingMoney,
-            gameOver: false,
         };
         this.lastUpdateTime = Date.now();
         this.trainingModel
@@ -95,12 +98,6 @@ export class GameEngine {
     }
 
     private checkGameOver(): boolean {
-        if (
-            this.currentState.enemies.some((enemy) => enemy.pathProgress >= 1)
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.currentState.lives <= 0;
     }
 }

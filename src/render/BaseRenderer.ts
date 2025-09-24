@@ -108,31 +108,28 @@ export abstract class BaseRenderer {
         });
     }
 
-    private drawInfoPanel(gameTime: number, waveNumber: number, money: number) {
+    private drawInfoPanel(gameTime: number, waveNumber: number, money: number, lives: number) {
         const barHeight = 50;
         // set the text style
         this.ctx.fillStyle = 'white';
         this.ctx.font = 'bold 20px Arial';
         this.ctx.textBaseline = 'middle'; // makes vertical alignment easier
         const textY = barHeight / 2;
-        const sectionWidth = this.canvasWidth / 3;
+        const sectionWidth = this.canvasWidth / 4;
         // draw each piece of information in its own section
         this.ctx.textAlign = 'center';
         this.ctx.fillText(
             `Time: ${gameTime.toFixed(1)}s`,
-            sectionWidth / 2,
+            sectionWidth * 0.5,
             textY
         );
         this.ctx.fillText(
             `Wave: ${waveNumber}`,
-            sectionWidth + sectionWidth / 2,
+            sectionWidth * 1.5,
             textY
         );
-        this.ctx.fillText(
-            `Money: $${money}`,
-            sectionWidth * 2 + sectionWidth / 2,
-            textY
-        );
+        this.ctx.fillText(`Money: $${money}`, sectionWidth * 2.5, textY);
+        this.ctx.fillText(`Lives: ${'♥'.repeat(lives)}`, sectionWidth * 3.5, textY);
 
         const panelX = GAME_CONFIG.map.width;
         const panelY = 50; // start below the top info bar
@@ -188,7 +185,8 @@ export abstract class BaseRenderer {
         this.drawInfoPanel(
             gameState.gameTime,
             gameState.waveNumber,
-            gameState.money
+            gameState.money,
+            gameState.lives
         );
         // save the current context state (un-translated)
         this.ctx.save();

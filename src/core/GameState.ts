@@ -4,6 +4,7 @@ export interface GameState {
     gameTime: number;
     waveNumber: number;
     money: number;
+    lives: number;
     gameOver: boolean;
     enemies: Enemy[];
     towers: Tower[];

@@ -44,6 +44,7 @@ export interface Tower {
 
 export const GAME_CONFIG = {
     startingMoney: 40,
+    startingLives: 3,
     map: {
         width: 900,
         height: 600,

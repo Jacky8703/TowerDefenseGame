@@ -20,6 +20,7 @@ interface GameInfo {
         gameTime: number;
         waveNumber: number;
         money: number;
+        lives: number;
         gameOver: boolean;
     };
     actions: Action[];
@@ -167,6 +168,7 @@ function getGameInfo(): GameInfo {
             gameTime: 1300, // enough time to reach wave 50
             waveNumber: 50, // not even possible with current config, the health of enemies will be too high (multiplied by more than 1400 at wave 50)
             money: 999,
+            lives: GAME_CONFIG.startingLives,
             gameOver: false,
         },
         actions: [

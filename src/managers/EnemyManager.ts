@@ -8,17 +8,23 @@ export class EnemyManager {
         this.map = gameMap;
     }
 
-    update(deltaTime: number, gameEnemies: Enemy[], money: number): number {
+    update(deltaTime: number, gameEnemies: Enemy[]): {reward: number, livesLost: number} {
+        let reward = 0;
+        let livesLost = 0;
         for (let i = gameEnemies.length - 1; i >= 0; i--) {
             // iterate backwards for safe removal
+            if (gameEnemies[i].pathProgress >= 1) {
+                livesLost += 1;
+                gameEnemies[i].currentHealth = 0; // mark for removal
+            }
             if (gameEnemies[i].currentHealth <= 0) {
-                money += GAME_CONFIG.enemies[gameEnemies[i].type].reward;
+                reward += GAME_CONFIG.enemies[gameEnemies[i].type].reward;
                 gameEnemies.splice(i, 1);
             } else {
                 this.move(gameEnemies[i], deltaTime);
             }
         }
-        return money;
+        return {reward, livesLost};
     }
 
     spawnEnemy(
