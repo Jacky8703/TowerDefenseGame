@@ -29,8 +29,14 @@ function handleStartGame() {
     window.location.href = `game.html?map=${encodeURIComponent(selectedMapName)}`;
 }
 
+// reset the selector and populate it
+mapSelector.innerHTML = '';
+let option = document.createElement('option');
 const savedMaps = localStorage.getItem(GAME_CONFIG.LOCAL_STORAGE_KEY);
 if (savedMaps) {
+    option.value = GAME_CONFIG.map.default.name;
+    option.textContent = GAME_CONFIG.map.default.name;
+    mapSelector.appendChild(option);
     allMaps = JSON.parse(savedMaps);
 } else {
     // provide a default map if none are in local storage
@@ -41,13 +47,6 @@ if (savedMaps) {
         },
     ];
 }
-
-// reset the selector and populate it
-mapSelector.innerHTML = '';
-let option = document.createElement('option');
-option.value = GAME_CONFIG.map.default.name;
-option.textContent = GAME_CONFIG.map.default.name;
-mapSelector.appendChild(option);
 allMaps.forEach((map) => {
     option = document.createElement('option');
     option.value = map.name;
