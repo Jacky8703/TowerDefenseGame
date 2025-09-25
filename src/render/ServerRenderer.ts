@@ -9,9 +9,9 @@ import {
 } from './DrawingUtils.js';
 
 export class ServerRenderer {
-    private map: GameMap;
-    private canvas: Canvas;
-    private ctx: NodeCanvasRenderingContext2D;
+    private readonly map: GameMap;
+    private readonly canvas: Canvas;
+    private readonly ctx: NodeCanvasRenderingContext2D;
 
     constructor(map: GameMap) {
         this.map = map;

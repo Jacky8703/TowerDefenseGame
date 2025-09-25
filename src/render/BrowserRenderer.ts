@@ -11,13 +11,14 @@ interface BrowserPanel {
     towerButtons: HTMLButtonElement[];
     gameOverScreen: HTMLElement;
     finalWaveNumber: HTMLElement;
+    retryLink: HTMLAnchorElement;
 }
 
 export class BrowserRenderer {
-    private map: GameMap;
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private browserPanel: BrowserPanel;
+    private readonly map: GameMap;
+    private readonly canvas: HTMLCanvasElement;
+    private readonly ctx: CanvasRenderingContext2D;
+    private readonly browserPanel: BrowserPanel;
     private selectedTowerType: TowerType | null;
     private action: Action;
 
@@ -31,7 +32,11 @@ export class BrowserRenderer {
             towerButtons: [],
             gameOverScreen: document.getElementById('game-over-screen')!,
             finalWaveNumber: document.getElementById('final-wave-number')!,
+            retryLink: document.getElementById('retry-link') as HTMLAnchorElement,
         };
+        this.browserPanel.retryLink.addEventListener('click', () => {
+            window.location.reload();
+        });
         this.selectedTowerType = null;
         this.action = { type: 'NONE' };
         this.canvas.width = this.map.width + SIDE_PANEL_WIDTH;

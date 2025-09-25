@@ -163,6 +163,11 @@
 #game-over-content p {
     font-size: 1.2rem;
 }
+#retry-link {
+    display: block;
+    color: #a0aec0;
+    margin: 0.5rem;
+}
 
 /* Editor Styles */
 #editor-body {
