@@ -66,15 +66,12 @@ const actionSchema = z.discriminatedUnion('type', [
     noneActionSchema,
 ]);
 
-const resetSchema = z.object({
-    changeMap: z.boolean().default(false),
-    waypoints: z.array(
-        z.object({
-            x: z.number(),
-            y: z.number(),
-        })
-    )
-});
+const waypointsSchema = z.array(
+    z.object({
+        x: z.number(),
+        y: z.number(),
+    })
+).optional();
 
 // overwrite Action with the inferred type from the schema, it will be the same as before
 type Action = z.infer<typeof actionSchema>;
@@ -103,8 +100,8 @@ app.get('/info', (req, res) => {
 
 app.post('/reset', (req, res) => {
     try {
-        const { changeMap, waypoints } = resetSchema.parse(req.body);
-        if (changeMap) {
+        const waypoints = waypointsSchema.parse(req.body);
+        if (waypoints && waypoints.length >= 2) {
             map = new GameMap(waypoints);
             enemyManager.setNewMap(map);
             towerManager.setNewMap(map);
