@@ -1,4 +1,5 @@
 :root {
+    --body-bg: #1a202c;
     --panel-bg: #2d3748;
     --text-light: #edf2f7;
     --border-color: #4a5568;
@@ -7,10 +8,95 @@
     --button-disabled-bg: #1a202c;
 }
 
-body {
+/* Menu Styles */
+#menu-body {
     margin: 0;
     font-family: sans-serif;
-    background-color: #1a202c;
+    background-color: var(--body-bg);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    flex-direction: column;
+}
+#menu-body h1 {
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    margin-bottom: 0.5rem;
+}
+#menu-body p {
+    font-size: 1.2rem;
+    color: #a0aec0;
+    margin-bottom: 3rem;
+}
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.menu-button {
+    display: block;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-light);
+    background-color: var(--button-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    text-decoration: none;
+}
+.menu-button:hover {
+    background-color: var(--button-hover-bg);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Map Selection Styles --- */
+#maps-body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+#maps-body h1 {
+    font-weight: 300;
+    font-size: 3rem;
+    margin: 0;
+}
+#mapSelector,
+#startGameButton {
+    font-size: 1.2rem;
+    padding: 0.75rem 1.5rem;
+    min-width: 300px;
+    text-align: center;
+    color: #ffffff;
+    background-color: var(--button-bg);
+    border-radius: 4px;
+}
+#startGameButton {
+    font-weight: bold;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+}
+.back-link {
+    color: #a0aec0;
+    margin-top: 1rem;
+}
+
+/* Game Styles */
+#game-body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: var(--body-bg);
     color: var(--text-light);
     display: flex;
     justify-content: center;
@@ -19,25 +105,15 @@ body {
     flex-direction: column;
     gap: 1rem;
 }
-
-h1 {
-    margin: 0;
-    font-weight: 300;
-    letter-spacing: 2px;
-}
-
 #gameCanvas {
     border: 1px solid var(--border-color);
-    background-color: darkgreen; /* A more traditional TD background */
     border-radius: 4px;
 }
-
 #towers-panel {
     display: flex;
     flex-direction: row; /* Arrange buttons horizontally */
     gap: 0.75rem;
 }
-
 .tower-button {
     padding: 0.75rem 1.5rem; /* Adjusted for a horizontal layout */
     font-size: 1rem;
@@ -50,11 +126,9 @@ h1 {
     transition: background-color 0.2s ease, border-color 0.2s ease;
     text-transform: capitalize;
 }
-
 .tower-button:hover:not(:disabled) {
     background-color: var(--button-hover-bg);
 }
-
 .tower-button:disabled {
     background-color: var(--button-disabled-bg);
     color: #718096;
@@ -62,7 +136,6 @@ h1 {
     border-color: #2d3748;
     text-shadow: none;
 }
-
 #game-over-screen {
     display: none; /* Hidden by default */
     position: fixed; /* Cover the entire viewport */
@@ -75,7 +148,6 @@ h1 {
     align-items: center;
     z-index: 100; /* Ensure it's on top of everything */
 }
-
 #game-over-content {
     text-align: center;
     background-color: var(--panel-bg);
@@ -83,13 +155,48 @@ h1 {
     border-radius: 8px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
-
 #game-over-content h2 {
     font-size: 3rem;
     margin: 0 0 1rem 0;
     color: #e53e3e; /* Red color for "Game Over" */
 }
-
 #game-over-content p {
     font-size: 1.2rem;
+}
+
+/* Editor Styles */
+#editor-body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column; /* Stack elements vertically */
+    gap: 1rem; /* Add space between h1, canvas, and buttons */
+}  
+#editorCanvas {
+    background-color: forestgreen;
+    border: 2px solid black;
+    cursor: pointer;
+}
+#controls input[type='text'] {
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: var(--text-light);
+    background-color: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+}
+#controls button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: var(--button-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
 }

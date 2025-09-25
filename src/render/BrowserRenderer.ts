@@ -1,7 +1,11 @@
 import { Action, GAME_CONFIG, TowerType } from '../core/GameConfig.js';
 import { GameMap } from '../core/GameMap.js';
 import { GameState } from '../core/GameState.js';
-import { BaseRenderer, INFO_PANEL_HEIGHT } from './BaseRenderer.js';
+import {
+    INFO_PANEL_HEIGHT,
+    renderGameLayout,
+    SIDE_PANEL_WIDTH,
+} from './DrawingUtils.js';
 
 interface BrowserPanel {
     towerButtons: HTMLButtonElement[];
@@ -9,19 +13,20 @@ interface BrowserPanel {
     finalWaveNumber: HTMLElement;
 }
 
-export class BrowserRenderer extends BaseRenderer {
+export class BrowserRenderer {
+    private map: GameMap;
     private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
     private browserPanel: BrowserPanel;
     private selectedTowerType: TowerType | null;
-    action: Action;
+    private action: Action;
 
     constructor(map: GameMap) {
-        const canvas = document.getElementById(
+        this.map = map;
+        this.canvas = document.getElementById(
             'gameCanvas'
         ) as HTMLCanvasElement;
-        super(map);
-        this.ctx = canvas.getContext('2d')!;
-        this.canvas = canvas;
+        this.ctx = this.canvas.getContext('2d')!;
         this.browserPanel = {
             towerButtons: [],
             gameOverScreen: document.getElementById('game-over-screen')!,
@@ -29,8 +34,8 @@ export class BrowserRenderer extends BaseRenderer {
         };
         this.selectedTowerType = null;
         this.action = { type: 'NONE' };
-        this.canvas.width = this.canvasWidth;
-        this.canvas.height = this.canvasHeight;
+        this.canvas.width = this.map.width + SIDE_PANEL_WIDTH;
+        this.canvas.height = this.map.height + INFO_PANEL_HEIGHT;
 
         for (const type of Object.values(TowerType)) {
             const button = document.getElementById(
@@ -48,12 +53,22 @@ export class BrowserRenderer extends BaseRenderer {
     }
 
     renderToBrowser(gameState: GameState) {
-        this.render(gameState);
+        renderGameLayout(this.ctx, this.map, gameState);
         this.updateBrowserPanel(
             gameState.money,
             gameState.waveNumber,
             gameState.gameOver
         );
+        this.action = { type: 'NONE' }; // reset action
+    }
+
+    getAction(): Action {
+        return this.action;
+    }
+
+    renderGameOverScreen(finalWave: number) {
+        this.browserPanel.finalWaveNumber.textContent = finalWave.toString();
+        this.browserPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
     }
 
     private manageInput() {
@@ -90,12 +105,6 @@ export class BrowserRenderer extends BaseRenderer {
         waveNumber: number,
         gameOver: boolean
     ) {
-        if (gameOver) {
-            this.browserPanel.finalWaveNumber.textContent =
-                waveNumber.toString();
-            this.browserPanel.gameOverScreen.style.display = 'flex'; // make the screen visible
-            return;
-        }
         this.browserPanel.towerButtons.forEach((button) => {
             button.disabled =
                 money < GAME_CONFIG.towers[button.id as TowerType].cost ||

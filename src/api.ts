@@ -74,7 +74,7 @@ const port = 3000;
 
 app.use(express.json());
 
-const map = new GameMap();
+const map = new GameMap([...GAME_CONFIG.map.default.waypoints]);
 const enemyManager = new EnemyManager(map);
 const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);

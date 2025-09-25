@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tower Defense - Game</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body id="game-body">
+    <h1>Tower Defense Game</h1>
+    <canvas id="gameCanvas"></canvas>
+    <div id="towers-panel">
+        <!-- id as GameConfig TowerType -->
+        <button class="tower-button" id="archer"></button>
+        <button class="tower-button" id="cannon"></button>
+        <button class="tower-button" id="sniper"></button>
+    </div>
+
+    <div id="game-over-screen">
+        <div id="game-over-content">
+            <h2>Game Over</h2>
+            <p>You reached wave <span id="final-wave-number">0</span>.</p>
+        </div>
+    </div>
+    <script type="module" src="/src/game.ts"></script>
+</body>
+</html>

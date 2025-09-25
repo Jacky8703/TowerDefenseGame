@@ -19,14 +19,12 @@ export class GameMap {
     readonly path: Path;
     readonly buildableCells: Position[];
 
-    constructor() {
-        this.validateWaypointsConfig();
+    constructor(waypoints: Position[]) {
+        this.validateWaypointsConfig(waypoints);
         this.width = GAME_CONFIG.map.width;
         this.height = GAME_CONFIG.map.height;
         this.cellSize = GAME_CONFIG.map.cellSize;
-        this.path = this.buildFullPath([
-            ...GAME_CONFIG.map.waypointTopLeftCorners,
-        ]);
+        this.path = this.buildFullPath(waypoints);
         this.buildableCells = this.calculateBuildableCells();
     }
 
@@ -36,33 +34,33 @@ export class GameMap {
         );
     }
 
-    private validateWaypointsConfig() {
-        for (
-            let i = 0;
-            i < GAME_CONFIG.map.waypointTopLeftCorners.length;
-            i++
-        ) {
-            const curr = GAME_CONFIG.map.waypointTopLeftCorners[i];
-            const next = GAME_CONFIG.map.waypointTopLeftCorners[i + 1];
+    private validateWaypointsConfig(waypoints: Position[]) {
+        for (let i = 0; i < waypoints.length; i++) {
+            const curr = waypoints[i];
+            const next = waypoints[i + 1];
             if (
-                curr.x % GAME_CONFIG.map.cellSize !== 0 ||
-                curr.y % GAME_CONFIG.map.cellSize !== 0
+                (curr.x - GAME_CONFIG.map.cellSize / 2) %
+                    GAME_CONFIG.map.cellSize !==
+                    0 ||
+                (curr.y - GAME_CONFIG.map.cellSize / 2) %
+                    GAME_CONFIG.map.cellSize !==
+                    0
             ) {
                 throw new Error(
-                    `waypoint ${i} coordinates must be a multiple of cell size ${GAME_CONFIG.map.cellSize}`
+                    `waypoint ${i} coordinates must be aligned to the grid`
                 );
             }
             if (
-                curr.x < 0 ||
-                curr.x > GAME_CONFIG.map.width - GAME_CONFIG.map.cellSize ||
-                curr.y < 0 ||
-                curr.y > GAME_CONFIG.map.height - GAME_CONFIG.map.cellSize
+                curr.x < GAME_CONFIG.map.cellSize / 2 ||
+                curr.x > GAME_CONFIG.map.width - GAME_CONFIG.map.cellSize / 2 ||
+                curr.y < GAME_CONFIG.map.cellSize / 2 ||
+                curr.y > GAME_CONFIG.map.height - GAME_CONFIG.map.cellSize / 2
             ) {
                 throw new Error(
                     `waypoint ${i} coordinates must be within the map boundaries`
                 );
             }
-            if (i < GAME_CONFIG.map.waypointTopLeftCorners.length - 1) {
+            if (i < waypoints.length - 1) {
                 // skip last waypoint
                 if (curr.x !== next.x && curr.y !== next.y) {
                     throw new Error(
@@ -77,13 +75,6 @@ export class GameMap {
         const dx = Math.sign(to.x - from.x); // "<-" -1, 0, 1 "->"
         const dy = Math.sign(to.y - from.y); // "^" -1, 0, 1 "v"
         return { dx: dx, dy: dy };
-    }
-
-    private centerCoordinates(pos: Position): Position {
-        return {
-            x: pos.x + this.cellSize / 2,
-            y: pos.y + this.cellSize / 2,
-        };
     }
 
     // the full path will be the one that links all waypoints
@@ -121,10 +112,6 @@ export class GameMap {
             nextDirection: { dx: 0, dy: 0 },
             distanceFromStart: fullLength,
         });
-        waypoints.forEach(
-            (w) => (w.position = this.centerCoordinates(w.position))
-        ); // not reassigning reference but modifying properties so forEach does the work
-        fullPath = fullPath.map((p) => (p = this.centerCoordinates(p)));
 
         return { waypoints: waypoints, allCells: fullPath, length: fullLength };
     }

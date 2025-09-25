@@ -42,6 +42,11 @@ export interface Tower {
     attackCooldown: number;
 }
 
+export interface CustomMap {
+    name: string;
+    waypoints: Position[];
+}
+
 export const GAME_CONFIG = {
     startingMoney: 40,
     startingLives: 3,
@@ -49,21 +54,24 @@ export const GAME_CONFIG = {
         width: 900,
         height: 600,
         cellSize: 50, // size of each grid cell in pixels, must be a point coordinate divisor
-        waypointTopLeftCorners: [
-            // must be aligned horizontally or vertically
-            { x: 50, y: 0 },
-            { x: 50, y: 300 },
-            { x: 200, y: 300 },
-            { x: 200, y: 450 },
-            { x: 350, y: 450 },
-            { x: 350, y: 100 },
-            { x: 800, y: 100 },
-            { x: 800, y: 250 },
-            { x: 500, y: 250 },
-            { x: 500, y: 500 },
-            { x: 700, y: 500 },
-            { x: 700, y: 550 },
-        ],
+        default: {
+            name: 'default',
+            waypoints: [
+                // must be aligned horizontally or vertically
+                { x: 75, y: 25 },
+                { x: 75, y: 325 },
+                { x: 225, y: 325 },
+                { x: 225, y: 475 },
+                { x: 375, y: 475 },
+                { x: 375, y: 125 },
+                { x: 825, y: 125 },
+                { x: 825, y: 275 },
+                { x: 525, y: 275 },
+                { x: 525, y: 525 },
+                { x: 725, y: 525 },
+                { x: 725, y: 575 },
+            ],
+        },
     },
     enemies: {
         [EnemyType.BASIC]: {
@@ -87,7 +95,7 @@ export const GAME_CONFIG = {
     },
     waves: {
         waveDelay: 10, // time between waves in seconds
-        spawnDelay: 1.5, // time between spawns in seconds
+        spawnDelay: 1.2, // time between spawns in seconds
         list: [
             // first 10 waves
             { basic: 2, fast: 0, tank: 0 },
@@ -132,4 +140,5 @@ export const GAME_CONFIG = {
         },
     },
     FIXED_DELTA_TIME: 0.1, // one step counts as 0.1 seconds
+    LOCAL_STORAGE_KEY: 'tower-defense-maps',
 } as const;

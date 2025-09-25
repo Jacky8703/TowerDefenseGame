@@ -8,7 +8,10 @@ export class EnemyManager {
         this.map = gameMap;
     }
 
-    update(deltaTime: number, gameEnemies: Enemy[]): {reward: number, livesLost: number} {
+    update(
+        deltaTime: number,
+        gameEnemies: Enemy[]
+    ): { reward: number; livesLost: number } {
         let reward = 0;
         let livesLost = 0;
         for (let i = gameEnemies.length - 1; i >= 0; i--) {
@@ -24,7 +27,7 @@ export class EnemyManager {
                 this.move(gameEnemies[i], deltaTime);
             }
         }
-        return {reward, livesLost};
+        return { reward, livesLost };
     }
 
     spawnEnemy(
@@ -34,12 +37,8 @@ export class EnemyManager {
         gameEnemies: Enemy[]
     ) {
         const startPosition: Position = {
-            x:
-                GAME_CONFIG.map.waypointTopLeftCorners[0].x +
-                GAME_CONFIG.map.cellSize / 2,
-            y:
-                GAME_CONFIG.map.waypointTopLeftCorners[0].y +
-                GAME_CONFIG.map.cellSize / 2,
+            x: this.map.path.waypoints[0].position.x,
+            y: this.map.path.waypoints[0].position.y,
         };
 
         gameEnemies.push({

@@ -59,7 +59,7 @@ export class GameEngine {
         }
         // update all managers
         this.waveManager.update(this.deltaTime, this.currentState.enemies);
-        const {reward, livesLost} = this.enemyManager.update(
+        const { reward, livesLost } = this.enemyManager.update(
             this.deltaTime,
             this.currentState.enemies
         );
