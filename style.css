@@ -65,12 +65,7 @@
     align-items: center;
     min-height: 100vh;
     flex-direction: column;
-    gap: 1.5rem;
-}
-#maps-body h1 {
-    font-weight: 300;
-    font-size: 3rem;
-    margin: 0;
+    gap: 1rem;
 }
 #mapSelector,
 #startGameButton {
