@@ -2,7 +2,7 @@ import { Enemy, EnemyType, GAME_CONFIG, Position } from '../core/GameConfig.js';
 import { GameMap } from '../core/GameMap.js';
 
 export class EnemyManager {
-    private readonly map: GameMap;
+    private map: GameMap;
 
     constructor(gameMap: GameMap) {
         this.map = gameMap;
@@ -54,6 +54,10 @@ export class EnemyManager {
             currentWaypointIndex: 1,
             pathProgress: 0,
         });
+    }
+
+    setNewMap(gameMap: GameMap) {
+        this.map = gameMap;
     }
 
     private move(enemy: Enemy, deltaTime: number) {

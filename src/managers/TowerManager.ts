@@ -8,7 +8,7 @@ import {
 import { GameMap } from '../core/GameMap.js';
 
 export class TowerManager {
-    private readonly map: GameMap;
+    private map: GameMap;
 
     constructor(gameMap: GameMap) {
         this.map = gameMap;
@@ -53,6 +53,10 @@ export class TowerManager {
             attackCooldown: GAME_CONFIG.towers[type].attackCooldown,
         });
         return money - GAME_CONFIG.towers[type].cost;
+    }
+
+    setNewMap(gameMap: GameMap) {
+        this.map = gameMap;
     }
 
     // for each tower, check if it can fire, if yes check which enemies are in range and attack only the one with the highest progress along the path (the closest to the end)

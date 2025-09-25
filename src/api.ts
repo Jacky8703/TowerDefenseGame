@@ -66,6 +66,16 @@ const actionSchema = z.discriminatedUnion('type', [
     noneActionSchema,
 ]);
 
+const resetSchema = z.object({
+    changeMap: z.boolean().default(false),
+    waypoints: z.array(
+        z.object({
+            x: z.number(),
+            y: z.number(),
+        })
+    )
+});
+
 // overwrite Action with the inferred type from the schema, it will be the same as before
 type Action = z.infer<typeof actionSchema>;
 
@@ -74,7 +84,7 @@ const port = 3000;
 
 app.use(express.json());
 
-const map = new GameMap([...GAME_CONFIG.map.default.waypoints]);
+let map = new GameMap([...GAME_CONFIG.map.default.waypoints]);
 const enemyManager = new EnemyManager(map);
 const waveManager = new WaveManager(enemyManager);
 const towerManager = new TowerManager(map);
@@ -92,8 +102,27 @@ app.get('/info', (req, res) => {
 });
 
 app.post('/reset', (req, res) => {
-    engine.reset();
-    res.json(engine.getState());
+    try {
+        const { changeMap, waypoints } = resetSchema.parse(req.body);
+        if (changeMap) {
+            map = new GameMap(waypoints);
+            enemyManager.setNewMap(map);
+            towerManager.setNewMap(map);
+            renderer.reset(map);
+        }
+        engine.reset();
+        res.json(engine.getState());
+    } catch (err) {
+        if (err instanceof z.ZodError) {
+            console.error('Invalid reset request format:', err);
+            return res.status(400).json({
+                message: 'Invalid reset request format',
+                errors: z.treeifyError(err),
+            });
+        }
+        console.error('Unexpected Internal Server Error:', err);
+        return res.status(500).json({ message: 'Internal server error:' });
+    }
 });
 
 app.post('/step', (req, res) => {

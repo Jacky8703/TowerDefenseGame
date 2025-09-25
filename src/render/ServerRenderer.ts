@@ -9,9 +9,9 @@ import {
 } from './DrawingUtils.js';
 
 export class ServerRenderer {
-    private readonly map: GameMap;
-    private readonly canvas: Canvas;
-    private readonly ctx: NodeCanvasRenderingContext2D;
+    private map: GameMap;
+    private canvas: Canvas;
+    private ctx: NodeCanvasRenderingContext2D;
 
     constructor(map: GameMap) {
         this.map = map;
@@ -25,5 +25,14 @@ export class ServerRenderer {
     renderToBuffer(gameState: GameState): Buffer {
         renderGameLayout(this.ctx, this.map, gameState);
         return this.canvas.toBuffer('image/png');
+    }
+
+    reset(map: GameMap) {
+        this.map = map;
+        this.canvas = createCanvas(
+            this.map.width + SIDE_PANEL_WIDTH,
+            this.map.height + INFO_PANEL_HEIGHT
+        );
+        this.ctx = this.canvas.getContext('2d', { alpha: false });
     }
 }
