@@ -71,7 +71,7 @@ canvas.addEventListener('click', (event) => {
 
     // add the valid waypoint with coordinates centered to the path and redraw
     waypoints.push({ x: waypointX, y: waypointY });
-    ctx.fillStyle = 'saddlebrown';
+    ctx.fillStyle = GAME_CONFIG.map.pathColor;
     ctx.fillRect(
         waypointX - GAME_CONFIG.map.cellSize / 2,
         waypointY - GAME_CONFIG.map.cellSize / 2,
@@ -84,7 +84,7 @@ canvas.addEventListener('click', (event) => {
         GAME_CONFIG.map.cellSize,
         GAME_CONFIG.map.cellSize
     );
-    drawPath(ctx, waypoints, 'saddlebrown');
+    drawPath(ctx, waypoints, GAME_CONFIG.map.pathColor);
 });
 
 resetButton.addEventListener('click', () => {

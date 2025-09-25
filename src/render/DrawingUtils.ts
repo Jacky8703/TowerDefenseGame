@@ -17,7 +17,7 @@ export const SIDE_PANEL_WIDTH = 150;
 export function drawGrid(
     ctx: CanvasRenderingContext2D | NodeCanvasRenderingContext2D
 ) {
-    ctx.fillStyle = 'forestgreen';
+    ctx.fillStyle = GAME_CONFIG.map.cellColor;
     ctx.fillRect(0, 0, GAME_CONFIG.map.width, GAME_CONFIG.map.height);
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 1;
@@ -245,7 +245,7 @@ export function renderGameLayout(
     drawPath(
         ctx,
         map.path.waypoints.map((w) => w.position),
-        'saddlebrown'
+        GAME_CONFIG.map.pathColor
     );
     drawEnemies(ctx, gameState.enemies);
     drawTowers(ctx, gameState.towers, GAME_CONFIG.map.cellSize / 1.5);

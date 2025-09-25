@@ -16,7 +16,7 @@ let allMaps: CustomMap[] = [];
 
 function drawMapPreview(waypoints: Position[]) {
     drawGrid(previewCtx);
-    drawPath(previewCtx, waypoints, 'saddlebrown');
+    drawPath(previewCtx, waypoints, GAME_CONFIG.map.pathColor);
 }
 
 function handleStartGame() {

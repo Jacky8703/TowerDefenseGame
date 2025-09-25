@@ -54,6 +54,8 @@ export const GAME_CONFIG = {
         width: 900,
         height: 600,
         cellSize: 50, // size of each grid cell in pixels, must be a point coordinate divisor
+        cellColor: 'forestgreen',
+        pathColor: 'saddlebrown',
         default: {
             name: 'default',
             waypoints: [
