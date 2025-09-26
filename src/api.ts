@@ -99,27 +99,8 @@ app.get('/info', (req, res) => {
 });
 
 app.post('/reset', (req, res) => {
-    try {
-        const waypoints = waypointsSchema.parse(req.body);
-        if (waypoints && waypoints.length >= 2) {
-            map = new GameMap(waypoints);
-            enemyManager.setNewMap(map);
-            towerManager.setNewMap(map);
-            renderer.reset(map);
-        }
-        engine.reset();
-        res.json(engine.getState());
-    } catch (err) {
-        if (err instanceof z.ZodError) {
-            console.error('Invalid reset request format:', err);
-            return res.status(400).json({
-                message: 'Invalid reset request format',
-                errors: z.treeifyError(err),
-            });
-        }
-        console.error('Unexpected Internal Server Error:', err);
-        return res.status(500).json({ message: 'Internal server error:' });
-    }
+    engine.reset();
+    res.json(engine.getState());
 });
 
 app.post('/step', (req, res) => {
@@ -140,6 +121,29 @@ app.post('/step', (req, res) => {
             return res.status(400).json({ message: err.message });
         }
         // handle unexpected errors
+        console.error('Unexpected Internal Server Error:', err);
+        return res.status(500).json({ message: 'Internal server error:' });
+    }
+});
+
+app.post('/set-map', (req, res) => {
+    try {
+        const waypoints = waypointsSchema.parse(req.body);
+        if (waypoints && waypoints.length >= 2) {
+            map = new GameMap(waypoints);
+            enemyManager.setNewMap(map);
+            towerManager.setNewMap(map);
+            renderer.reset(map);
+        }
+        res.json(waypoints);
+    } catch (err) {
+        if (err instanceof z.ZodError) {
+            console.error('Invalid set-map request format:', err);
+            return res.status(400).json({
+                message: 'Invalid set-map request format',
+                errors: z.treeifyError(err),
+            });
+        }
         console.error('Unexpected Internal Server Error:', err);
         return res.status(500).json({ message: 'Internal server error:' });
     }
