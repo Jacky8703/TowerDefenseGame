@@ -151,6 +151,10 @@ app.post('/set-map', (req, res) => {
 
 app.get('/render', (req, res) => {
     const gameState = engine.getState();
+    if (gameState.gameOver) {
+        return res.status(400).json({ message: 'Game is over, cannot render.' });
+    }
+    // render only if the game is not over
     const imageBuffer = renderer.renderToBuffer(gameState);
     res.set('Content-Type', 'image/png');
     res.send(imageBuffer);
